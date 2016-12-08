@@ -24,13 +24,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import javax.persistence.EntityManager;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.TypedQuery;
-import javax.persistence.metamodel.Metamodel;
 import javax.swing.GroupLayout;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -45,9 +43,9 @@ import richtercloud.document.scanner.components.annotations.Tags;
 import richtercloud.document.scanner.components.tag.TagStorage;
 import richtercloud.document.scanner.gui.DefaultMainPanel;
 import richtercloud.document.scanner.gui.DocumentScannerFieldHandler;
-import richtercloud.document.scanner.ifaces.MainPanel;
 import richtercloud.document.scanner.gui.conf.DocumentScannerConf;
 import richtercloud.document.scanner.gui.conf.OCREngineConf;
+import richtercloud.document.scanner.ifaces.MainPanel;
 import richtercloud.document.scanner.model.WorkflowItem;
 import richtercloud.document.scanner.ocr.OCREngineFactory;
 import richtercloud.document.scanner.setter.ValueSetter;
@@ -62,6 +60,7 @@ import richtercloud.reflection.form.builder.jpa.JPACachedFieldRetriever;
 import richtercloud.reflection.form.builder.jpa.WarningHandler;
 import richtercloud.reflection.form.builder.jpa.idapplier.GeneratedValueIdApplier;
 import richtercloud.reflection.form.builder.jpa.idapplier.IdApplier;
+import richtercloud.reflection.form.builder.jpa.storage.PersistenceStorage;
 import richtercloud.reflection.form.builder.typehandler.TypeHandler;
 
 /**
@@ -82,13 +81,10 @@ public class AutoOCRValueDetectionReflectionFormBuilderIT {
                 ListTestClass.class,
                 QueryPanelTestClass.class,
                 PrimitivesTestClass.class));
+        PersistenceStorage storage = mock(PersistenceStorage.class);
+        when(storage.isClassSupported(any(Class.class))).thenReturn(true);
         for(Class<?> testClass : testClasses) {
             TypedQuery typedQuery = mock(TypedQuery.class);
-            EntityManager entityManager = mock(EntityManager.class);
-            when(entityManager.createQuery(anyString(), any(Class.class)))
-                    .thenReturn(typedQuery);
-            when(entityManager.getMetamodel())
-                    .thenReturn(mock(Metamodel.class));
             when(typedQuery.getResultList())
                     .thenReturn(new LinkedList<>(Arrays.asList(new EntityB())),
                             new LinkedList<>(Arrays.asList(new EntityB())),
@@ -102,7 +98,7 @@ public class AutoOCRValueDetectionReflectionFormBuilderIT {
             JPACachedFieldRetriever fieldRetriever = new JPACachedFieldRetriever();
             IdApplier idApplier = new GeneratedValueIdApplier();
 
-            AutoOCRValueDetectionReflectionFormBuilder instance = new AutoOCRValueDetectionReflectionFormBuilder(entityManager,
+            AutoOCRValueDetectionReflectionFormBuilder instance = new AutoOCRValueDetectionReflectionFormBuilder(storage,
                     "fieldDescriptionDialogTitle",
                     messageHandler, confirmMessageHandler,
                     fieldRetriever, idApplier,
@@ -126,7 +122,7 @@ public class AutoOCRValueDetectionReflectionFormBuilderIT {
             Map<Class<?>, WarningHandler<?>> warningHandlers = new HashMap<>();
             MainPanel mainPanel = new DefaultMainPanel(entityClasses,
                     primaryClassSelection,
-                    entityManager,
+                    storage,
                     amountMoneyUsageStatisticsStorage,
                     amountMoneyCurrencyStorage,
                     amountMoneyExchangeRateRetriever,
@@ -149,7 +145,7 @@ public class AutoOCRValueDetectionReflectionFormBuilderIT {
                     messageHandler,
                     confirmMessageHandler,
                     typeHandlerMapping,
-                    entityManager,
+                    storage,
                     fieldRetriever,
                     oCRResultPanelFetcher,
                     scanResultPanelFetcher,
