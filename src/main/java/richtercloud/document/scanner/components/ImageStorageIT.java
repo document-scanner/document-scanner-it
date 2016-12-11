@@ -17,7 +17,6 @@ package richtercloud.document.scanner.components;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -55,6 +54,8 @@ import richtercloud.reflection.form.builder.jpa.storage.DerbyEmbeddedPersistence
 import richtercloud.reflection.form.builder.jpa.storage.PersistenceStorage;
 import richtercloud.reflection.form.builder.jpa.storage.PostgresqlPersistenceStorage;
 import richtercloud.reflection.form.builder.jpa.storage.PostgresqlPersistenceStorageConf;
+import richtercloud.reflection.form.builder.storage.StorageConfInitializationException;
+import richtercloud.reflection.form.builder.storage.StorageCreationException;
 import richtercloud.reflection.form.builder.storage.StorageException;
 
 /**
@@ -64,7 +65,7 @@ import richtercloud.reflection.form.builder.storage.StorageException;
 public class ImageStorageIT {
     private final static Logger LOGGER = LoggerFactory.getLogger(ImageStorageIT.class);
 
-    public static void main(String[] args) throws IOException, StorageException, SQLException, InterruptedException {
+    public static void main(String[] args) throws IOException, StorageException, SQLException, InterruptedException, StorageConfInitializationException, StorageCreationException {
         File databaseDir = new File("/tmp/image-storage-it");
         File schemeChecksumFile = new File("/tmp/image-storage-it-checkum-file");
         File imageStorageDir = new File("/tmp/image-storage-dir");
