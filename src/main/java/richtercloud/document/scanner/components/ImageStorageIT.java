@@ -45,7 +45,7 @@ import richtercloud.document.scanner.gui.CachingImageWrapper;
 import richtercloud.document.scanner.gui.DefaultOCRSelectPanel;
 import richtercloud.document.scanner.gui.DefaultOCRSelectPanelPanel;
 import richtercloud.document.scanner.gui.conf.DocumentScannerConf;
-import richtercloud.document.scanner.gui.conf.OCREngineConf;
+import richtercloud.document.scanner.ifaces.OCREngineConf;
 import richtercloud.document.scanner.ifaces.ImageWrapper;
 import richtercloud.document.scanner.ifaces.OCRSelectPanel;
 import richtercloud.document.scanner.ocr.OCREngineFactory;
