@@ -45,10 +45,9 @@ import richtercloud.document.scanner.gui.CachingImageWrapper;
 import richtercloud.document.scanner.gui.DefaultOCRSelectPanel;
 import richtercloud.document.scanner.gui.DefaultOCRSelectPanelPanel;
 import richtercloud.document.scanner.gui.conf.DocumentScannerConf;
-import richtercloud.document.scanner.ifaces.OCREngineConf;
 import richtercloud.document.scanner.ifaces.ImageWrapper;
+import richtercloud.document.scanner.ifaces.OCREngine;
 import richtercloud.document.scanner.ifaces.OCRSelectPanel;
-import richtercloud.document.scanner.ocr.OCREngineFactory;
 import richtercloud.reflection.form.builder.jpa.storage.DerbyEmbeddedPersistenceStorage;
 import richtercloud.reflection.form.builder.jpa.storage.DerbyEmbeddedPersistenceStorageConf;
 import richtercloud.reflection.form.builder.jpa.storage.PersistenceStorage;
@@ -121,13 +120,11 @@ public class ImageStorageIT {
         document.close();
         //Mocking parts which are not functional for the test
         File documentFile = mock(File.class);
-        OCREngineFactory oCREngineFactory = mock(OCREngineFactory.class);
-        OCREngineConf oCREngineConf = mock(OCREngineConf.class);
+        OCREngine oCREngine = mock(OCREngine.class);
         DocumentScannerConf documentScannerConf = mock(DocumentScannerConf.class);
         MainPanelScanResultPanelFetcher fetcher = new MainPanelScanResultPanelFetcher(new DefaultOCRSelectPanelPanel(oCRSelectPanels,
                 documentFile,
-                oCREngineFactory,
-                oCREngineConf,
+                oCREngine,
                 documentScannerConf));
         byte[] data = fetcher.fetch();
         EntityA entityA = new EntityA(1L, data);

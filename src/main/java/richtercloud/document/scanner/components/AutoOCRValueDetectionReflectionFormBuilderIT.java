@@ -44,10 +44,9 @@ import richtercloud.document.scanner.components.tag.TagStorage;
 import richtercloud.document.scanner.gui.DefaultMainPanel;
 import richtercloud.document.scanner.gui.DocumentScannerFieldHandler;
 import richtercloud.document.scanner.gui.conf.DocumentScannerConf;
-import richtercloud.document.scanner.ifaces.OCREngineConf;
 import richtercloud.document.scanner.ifaces.MainPanel;
+import richtercloud.document.scanner.ifaces.OCREngine;
 import richtercloud.document.scanner.model.WorkflowItem;
-import richtercloud.document.scanner.ocr.OCREngineFactory;
 import richtercloud.document.scanner.setter.ValueSetter;
 import richtercloud.message.handler.ConfirmMessageHandler;
 import richtercloud.message.handler.MessageHandler;
@@ -116,8 +115,7 @@ public class AutoOCRValueDetectionReflectionFormBuilderIT {
             Window oCRProgressMonitorParent = frame;
             Set<Class<?>> entityClasses = new HashSet<Class<?>>(Arrays.asList(DocumentScannerExtensionsTestClass.class));
             Class<?> primaryClassSelection = DocumentScannerExtensionsTestClass.class;
-            OCREngineFactory oCREngineFactory = mock(OCREngineFactory.class);
-            OCREngineConf oCREngineConf = mock(OCREngineConf.class);
+            OCREngine oCREngine = mock(OCREngine.class);
             TagStorage tagStorage = mock(TagStorage.class);
             Map<Class<?>, WarningHandler<?>> warningHandlers = new HashMap<>();
             MainPanel mainPanel = new DefaultMainPanel(entityClasses,
@@ -129,8 +127,7 @@ public class AutoOCRValueDetectionReflectionFormBuilderIT {
                     messageHandler,
                     confirmMessageHandler,
                     frame,
-                    oCREngineFactory,
-                    oCREngineConf,
+                    oCREngine,
                     typeHandlerMapping,
                     documentScannerConf,
                     oCRProgressMonitorParent,
