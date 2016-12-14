@@ -43,6 +43,7 @@ import richtercloud.document.scanner.components.annotations.Tags;
 import richtercloud.document.scanner.components.tag.TagStorage;
 import richtercloud.document.scanner.gui.DefaultMainPanel;
 import richtercloud.document.scanner.gui.DocumentScannerFieldHandler;
+import richtercloud.document.scanner.gui.DocumentScannerFieldInitializer;
 import richtercloud.document.scanner.gui.conf.DocumentScannerConf;
 import richtercloud.document.scanner.ifaces.MainPanel;
 import richtercloud.document.scanner.ifaces.OCREngine;
@@ -59,6 +60,7 @@ import richtercloud.reflection.form.builder.jpa.JPACachedFieldRetriever;
 import richtercloud.reflection.form.builder.jpa.WarningHandler;
 import richtercloud.reflection.form.builder.jpa.idapplier.GeneratedValueIdApplier;
 import richtercloud.reflection.form.builder.jpa.idapplier.IdApplier;
+import richtercloud.reflection.form.builder.jpa.storage.FieldInitializer;
 import richtercloud.reflection.form.builder.jpa.storage.PersistenceStorage;
 import richtercloud.reflection.form.builder.typehandler.TypeHandler;
 
@@ -118,6 +120,7 @@ public class AutoOCRValueDetectionReflectionFormBuilderIT {
             OCREngine oCREngine = mock(OCREngine.class);
             TagStorage tagStorage = mock(TagStorage.class);
             Map<Class<?>, WarningHandler<?>> warningHandlers = new HashMap<>();
+            FieldInitializer fieldInitializer = new DocumentScannerFieldInitializer(fieldRetriever);
             MainPanel mainPanel = new DefaultMainPanel(entityClasses,
                     primaryClassSelection,
                     storage,
@@ -133,7 +136,8 @@ public class AutoOCRValueDetectionReflectionFormBuilderIT {
                     oCRProgressMonitorParent,
                     tagStorage,
                     idApplier,
-                    warningHandlers);
+                    warningHandlers,
+                    fieldInitializer);
             int initialQueryLimit = 20;
             String bidirectionalHelpDialogTitle = "Title";
             DocumentScannerFieldHandler fieldHandler = DocumentScannerFieldHandler.create(amountMoneyUsageStatisticsStorage,
@@ -155,7 +159,8 @@ public class AutoOCRValueDetectionReflectionFormBuilderIT {
                     idApplier,
                     warningHandlers,
                     initialQueryLimit,
-                    bidirectionalHelpDialogTitle);
+                    bidirectionalHelpDialogTitle,
+                    fieldInitializer);
 
             Object entityToUpdate = testClass.newInstance();
             ReflectionFormPanel testPanel = instance.transformEntityClass(testClass,
