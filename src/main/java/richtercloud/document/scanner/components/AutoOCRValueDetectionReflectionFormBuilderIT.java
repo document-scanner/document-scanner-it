@@ -43,7 +43,7 @@ import richtercloud.document.scanner.components.annotations.Tags;
 import richtercloud.document.scanner.components.tag.TagStorage;
 import richtercloud.document.scanner.gui.DefaultMainPanel;
 import richtercloud.document.scanner.gui.DocumentScannerFieldHandler;
-import richtercloud.document.scanner.gui.DocumentScannerFieldInitializer;
+import richtercloud.reflection.form.builder.jpa.storage.NoOpFieldInitializer;
 import richtercloud.document.scanner.gui.conf.DocumentScannerConf;
 import richtercloud.document.scanner.ifaces.MainPanel;
 import richtercloud.document.scanner.ifaces.OCREngine;
@@ -120,7 +120,7 @@ public class AutoOCRValueDetectionReflectionFormBuilderIT {
             OCREngine oCREngine = mock(OCREngine.class);
             TagStorage tagStorage = mock(TagStorage.class);
             Map<Class<?>, WarningHandler<?>> warningHandlers = new HashMap<>();
-            FieldInitializer fieldInitializer = new DocumentScannerFieldInitializer(fieldRetriever);
+            FieldInitializer fieldInitializer = new NoOpFieldInitializer();
             MainPanel mainPanel = new DefaultMainPanel(entityClasses,
                     primaryClassSelection,
                     storage,
