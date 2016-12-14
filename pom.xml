@@ -8,6 +8,13 @@
     </parent>
     <artifactId>document-scanner-it</artifactId>
     <packaging>jar</packaging>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <richtercloud.document.scanner.hibernate.version>5.0.11.Final</richtercloud.document.scanner.hibernate.version>
+    </properties>
     <dependencies>
         <dependency>
             <groupId>richtercloud</groupId>
@@ -26,7 +33,7 @@
             <artifactId>mockito-all</artifactId>
             <version>1.10.19</version>
         </dependency>
-        <dependency>
+<!--        <dependency>
             <groupId>org.eclipse.persistence</groupId>
             <artifactId>eclipselink</artifactId>
             <version>2.5.2</version>
@@ -36,6 +43,16 @@
             <artifactId>org.eclipse.persistence.jpa.modelgen.processor</artifactId>
             <version>2.5.2</version>
             <scope>provided</scope>
+        </dependency>-->
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>${richtercloud.document.scanner.hibernate.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-entitymanager</artifactId>
+            <version>${richtercloud.document.scanner.hibernate.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
@@ -44,27 +61,21 @@
             <type>jar</type>
         </dependency>
     </dependencies>
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-    </properties>
-        <build>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-failsafe-plugin</artifactId>
-                    <version>2.19.1</version>
-                    <executions>
-                        <execution>
-                            <goals>
-                                <goal>integration-test</goal>
-                                <goal>verify</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>2.19.1</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
@@ -85,6 +96,30 @@
                     <configLocation>check_style.xml</configLocation>
                 </configuration>
             </plugin>
-            </plugins>
-        </build>
+            <plugin>
+                <groupId>org.hibernate.orm.tooling</groupId>
+                <artifactId>hibernate-enhance-maven-plugin</artifactId>
+                <version>${richtercloud.document.scanner.hibernate.version}</version>
+                <executions>
+                    <execution>
+                        <id>enhancer</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>enhance</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <enableLazyInitialization>true</enableLazyInitialization>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.hibernate</groupId>
+                        <artifactId>hibernate-core</artifactId>
+                        <version>${richtercloud.document.scanner.hibernate.version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+        </plugins>
+    </build>
 </project>
