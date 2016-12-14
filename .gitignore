@@ -1,2 +1,3 @@
 target/
 mysql-5.7.16-linux-glibc2.5-x86_64.tar.gz
+derby.log
