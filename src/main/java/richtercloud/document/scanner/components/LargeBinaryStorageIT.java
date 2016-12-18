@@ -55,7 +55,9 @@ public class LargeBinaryStorageIT {
         storageConf.setPassword(password);
         storageConf.setDatabaseName(databaseName);
         PersistenceStorage storage = new PostgresqlAutoPersistenceStorage(storageConf,
-                persistenceUnitName);
+                persistenceUnitName,
+                1 //parallelQueryCount
+        );
         long randomSeed = System.currentTimeMillis();
         LOGGER.debug(String.format("random seed is %d", randomSeed));
         Random random = new Random(randomSeed);
@@ -73,7 +75,9 @@ public class LargeBinaryStorageIT {
         storage.shutdown();
         Thread.sleep(2000);
         storage = new PostgresqlAutoPersistenceStorage(storageConf,
-                persistenceUnitName);
+                persistenceUnitName,
+                1 //parallelQueryCount
+        );
         LOGGER.debug("querying large binary entity");
         storage.runQueryAll(LargeBinaryEntity.class);
         LOGGER.debug("query completed");

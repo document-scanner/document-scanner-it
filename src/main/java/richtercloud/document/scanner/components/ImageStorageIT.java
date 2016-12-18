@@ -83,7 +83,10 @@ public class ImageStorageIT {
                 databaseDir.getAbsolutePath(),
                 schemeChecksumFile);
         String persistenceUnitName = "richtercloud_document-scanner-it_jar_1.0-SNAPSHOTPU";
-        final PersistenceStorage storage = new DerbyEmbeddedPersistenceStorage(storageConf, persistenceUnitName);
+        final PersistenceStorage storage = new DerbyEmbeddedPersistenceStorage(storageConf,
+                persistenceUnitName,
+                1 //parallelQueryCount
+        );
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             LOGGER.info("shutting down storage");
             storage.shutdown();
@@ -228,7 +231,9 @@ public class ImageStorageIT {
         postgresqlPersistenceStorageConf.setUsername(username);
         postgresqlPersistenceStorageConf.setPassword(password);
         PersistenceStorage postgresqlStorage = new PostgresqlPersistenceStorage(postgresqlPersistenceStorageConf,
-                persistenceUnitName);
+                persistenceUnitName,
+                1 //parallelQueryCount
+        );
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             postgresProcess.destroy();
             try {

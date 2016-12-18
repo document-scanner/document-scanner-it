@@ -43,7 +43,7 @@ import richtercloud.document.scanner.components.annotations.Tags;
 import richtercloud.document.scanner.components.tag.TagStorage;
 import richtercloud.document.scanner.gui.DefaultMainPanel;
 import richtercloud.document.scanner.gui.DocumentScannerFieldHandler;
-import richtercloud.reflection.form.builder.jpa.storage.NoOpFieldInitializer;
+import richtercloud.reflection.form.builder.jpa.storage.ReflectionFieldInitializer;
 import richtercloud.document.scanner.gui.conf.DocumentScannerConf;
 import richtercloud.document.scanner.ifaces.MainPanel;
 import richtercloud.document.scanner.ifaces.OCREngine;
@@ -60,9 +60,9 @@ import richtercloud.reflection.form.builder.jpa.JPACachedFieldRetriever;
 import richtercloud.reflection.form.builder.jpa.WarningHandler;
 import richtercloud.reflection.form.builder.jpa.idapplier.GeneratedValueIdApplier;
 import richtercloud.reflection.form.builder.jpa.idapplier.IdApplier;
-import richtercloud.reflection.form.builder.jpa.storage.FieldInitializer;
 import richtercloud.reflection.form.builder.jpa.storage.PersistenceStorage;
 import richtercloud.reflection.form.builder.typehandler.TypeHandler;
+import richtercloud.reflection.form.builder.jpa.storage.FieldInitializer;
 
 /**
  * Integration test for resizability of class components.
@@ -120,7 +120,7 @@ public class AutoOCRValueDetectionReflectionFormBuilderIT {
             OCREngine oCREngine = mock(OCREngine.class);
             TagStorage tagStorage = mock(TagStorage.class);
             Map<Class<?>, WarningHandler<?>> warningHandlers = new HashMap<>();
-            FieldInitializer fieldInitializer = new NoOpFieldInitializer();
+            FieldInitializer fieldInitializer = new ReflectionFieldInitializer(fieldRetriever);
             MainPanel mainPanel = new DefaultMainPanel(entityClasses,
                     primaryClassSelection,
                     storage,
