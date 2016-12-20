@@ -12,34 +12,32 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package richtercloud.document.scanner.components;
+package richtercloud.document.scanner.it.entities;
 
 import java.io.Serializable;
-import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Lob;
-import javax.swing.ImageIcon;
 
 /**
  *
  * @author richter
  */
 @Entity
-public class EntityB implements Serializable {
+public class EntityByteArray implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue
     private Long id;
     @Lob
-    private List<ImageIcon> data;
+    private byte[] data;
 
-    protected EntityB() {
+    protected EntityByteArray() {
     }
 
-    public EntityB(Long id, List<ImageIcon> data) {
+    public EntityByteArray(Long id, byte[] data) {
         this.id = id;
         this.data = data;
     }
@@ -52,11 +50,11 @@ public class EntityB implements Serializable {
         return id;
     }
 
-    protected void setData(List<ImageIcon> data) {
+    protected void setData(byte[] data) {
         this.data = data;
     }
 
-    public List<ImageIcon> getData() {
+    public byte[] getData() {
         return data;
     }
 }

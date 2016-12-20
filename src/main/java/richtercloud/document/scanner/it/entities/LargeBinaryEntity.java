@@ -12,7 +12,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package richtercloud.document.scanner.components;
+package richtercloud.document.scanner.it.entities;
 
 import java.io.Serializable;
 import javax.persistence.Basic;
@@ -42,7 +42,7 @@ public class LargeBinaryEntity implements Serializable {
     @Basic(fetch = FetchType.LAZY)
     private byte[] binaryData;
 
-    public LargeBinaryEntity() {
+    protected LargeBinaryEntity() {
     }
 
     public LargeBinaryEntity(byte[] binaryData) {

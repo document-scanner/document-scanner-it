@@ -12,7 +12,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package richtercloud.document.scanner.components;
+package richtercloud.document.scanner.it;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,10 +22,11 @@ import java.util.Random;
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import richtercloud.document.scanner.it.entities.LargeBinaryEntity;
 import richtercloud.reflection.form.builder.jpa.storage.PersistenceStorage;
 import richtercloud.reflection.form.builder.jpa.storage.PostgresqlAutoPersistenceStorage;
 import richtercloud.reflection.form.builder.jpa.storage.PostgresqlAutoPersistenceStorageConf;
-import richtercloud.reflection.form.builder.storage.StorageConfInitializationException;
+import richtercloud.reflection.form.builder.storage.StorageConfValidationException;
 import richtercloud.reflection.form.builder.storage.StorageCreationException;
 import richtercloud.reflection.form.builder.storage.StorageException;
 
@@ -38,7 +39,7 @@ import richtercloud.reflection.form.builder.storage.StorageException;
 public class LargeBinaryStorageIT {
     private final static Logger LOGGER = LoggerFactory.getLogger(LargeBinaryStorageIT.class);
 
-    public static void main(String[] args) throws IOException, StorageConfInitializationException, StorageCreationException, StorageException, InterruptedException {
+    public static void main(String[] args) throws IOException, StorageConfValidationException, StorageCreationException, StorageException, InterruptedException {
         Set<Class<?>> entityClasses = new HashSet<>(Arrays.asList(LargeBinaryEntity.class));
         File databaseDir = File.createTempFile("document-scanner-large-binary-it", null);
         databaseDir.delete();

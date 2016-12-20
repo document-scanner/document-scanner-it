@@ -12,7 +12,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package richtercloud.document.scanner.components;
+package richtercloud.document.scanner.it;
 
 import java.awt.EventQueue;
 import java.awt.Window;
@@ -35,6 +35,9 @@ import javax.swing.JFrame;
 import javax.swing.WindowConstants;
 import org.jscience.economics.money.Money;
 import org.jscience.physics.amount.Amount;
+import richtercloud.document.scanner.components.AutoOCRValueDetectionReflectionFormBuilder;
+import richtercloud.document.scanner.components.OCRResultPanelFetcher;
+import richtercloud.document.scanner.components.ScanResultPanelFetcher;
 import static org.mockito.Mockito.*;
 import richtercloud.document.scanner.components.annotations.CommunicationTree;
 import richtercloud.document.scanner.components.annotations.OCRResult;

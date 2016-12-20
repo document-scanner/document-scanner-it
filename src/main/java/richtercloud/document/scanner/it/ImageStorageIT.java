@@ -12,16 +12,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package richtercloud.document.scanner.components;
+package richtercloud.document.scanner.it;
 
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
+import java.io.ObjectOutputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -35,25 +34,24 @@ import java.util.logging.Level;
 import javax.cache.Caching;
 import javax.swing.ImageIcon;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
-import static org.mockito.Mockito.mock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import richtercloud.document.scanner.gui.CachingImageWrapper;
 import richtercloud.document.scanner.gui.DefaultOCRSelectPanel;
-import richtercloud.document.scanner.gui.DefaultOCRSelectPanelPanel;
 import richtercloud.document.scanner.gui.conf.DocumentScannerConf;
 import richtercloud.document.scanner.ifaces.ImageWrapper;
-import richtercloud.document.scanner.ifaces.OCREngine;
 import richtercloud.document.scanner.ifaces.OCRSelectPanel;
+import richtercloud.document.scanner.it.entities.EntityByteArray;
+import richtercloud.document.scanner.it.entities.EntityImageIcon;
+import richtercloud.document.scanner.it.entities.EntityImageWrapper;
 import richtercloud.reflection.form.builder.jpa.storage.DerbyEmbeddedPersistenceStorage;
 import richtercloud.reflection.form.builder.jpa.storage.DerbyEmbeddedPersistenceStorageConf;
 import richtercloud.reflection.form.builder.jpa.storage.PersistenceStorage;
 import richtercloud.reflection.form.builder.jpa.storage.PostgresqlPersistenceStorage;
 import richtercloud.reflection.form.builder.jpa.storage.PostgresqlPersistenceStorageConf;
-import richtercloud.reflection.form.builder.storage.StorageConfInitializationException;
+import richtercloud.reflection.form.builder.storage.StorageConfValidationException;
 import richtercloud.reflection.form.builder.storage.StorageCreationException;
 import richtercloud.reflection.form.builder.storage.StorageException;
 
@@ -64,14 +62,21 @@ import richtercloud.reflection.form.builder.storage.StorageException;
 public class ImageStorageIT {
     private final static Logger LOGGER = LoggerFactory.getLogger(ImageStorageIT.class);
 
-    public static void main(String[] args) throws IOException, StorageException, SQLException, InterruptedException, StorageConfInitializationException, StorageCreationException {
-        File databaseDir = new File("/tmp/image-storage-it");
-        File schemeChecksumFile = new File("/tmp/image-storage-it-checkum-file");
-        File imageStorageDir = new File("/tmp/image-storage-dir");
+    public static void main(String[] args) throws IOException, StorageException, SQLException, InterruptedException, StorageConfValidationException, StorageCreationException {
+        File databaseDir = File.createTempFile(ImageStorageIT.class.getSimpleName(), "database-dir");
+        databaseDir.delete();
+        //databaseDir mustn't exist for Apache Derby
+        LOGGER.debug(String.format("database directory is %s", databaseDir.getAbsolutePath()));
+        File schemeChecksumFile = File.createTempFile(ImageStorageIT.class.getSimpleName(), "scheme-checksum");
+        LOGGER.debug(String.format("scheme checksum file is %s", schemeChecksumFile.getAbsolutePath()));
+        File imageStorageDir = File.createTempFile(ImageStorageIT.class.getSimpleName(), "image-storage-dir");
+        imageStorageDir.delete();
+        imageStorageDir.mkdirs();
+        LOGGER.debug(String.format("image storage directory is %s", imageStorageDir.getAbsolutePath()));
         Connection connection = DriverManager.getConnection(String.format("jdbc:derby:%s;create=true", databaseDir.getAbsolutePath()));
         connection.close();
-        Set<Class<?>> entityClasses = new HashSet<Class<?>>(Arrays.asList(EntityA.class,
-                EntityB.class));
+        Set<Class<?>> entityClasses = new HashSet<Class<?>>(Arrays.asList(EntityByteArray.class,
+                EntityImageIcon.class));
 //        DerbyNetworkPersistenceStorageConf storageConf = new DerbyNetworkPersistenceStorageConf(entityClasses,
 //                "localhost",
 //                schemeChecksumFile);
@@ -87,6 +92,7 @@ public class ImageStorageIT {
                 persistenceUnitName,
                 1 //parallelQueryCount
         );
+        storage.start();
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             LOGGER.info("shutting down storage");
             storage.shutdown();
@@ -111,6 +117,10 @@ public class ImageStorageIT {
         @SuppressWarnings("unchecked")
         List<PDPage> pages = document.getDocumentCatalog().getAllPages();
         List<OCRSelectPanel> oCRSelectPanels = new LinkedList<>();
+        List<ImageWrapper> imageWrappers = new LinkedList<>();
+        byte[] data;
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
         for (PDPage page : pages) {
             BufferedImage image = page.convertToImage();
             ImageWrapper imageWrapper = new CachingImageWrapper(databaseDir,
@@ -118,22 +128,20 @@ public class ImageStorageIT {
             OCRSelectPanel oCRSelectPanel = new DefaultOCRSelectPanel(imageWrapper,
                     DocumentScannerConf.PREFERRED_WIDTH_DEFAULT);
             oCRSelectPanels.add(oCRSelectPanel);
-            imageIcons.add(new ImageIcon(image));
+            ImageIcon imageIcon = new ImageIcon(image);
+            objectOutputStream.writeObject(imageIcon);
+            imageIcons.add(imageIcon);
+            imageWrappers.add(new CachingImageWrapper(imageStorageDir, image));
         }
         document.close();
-        //Mocking parts which are not functional for the test
-        File documentFile = mock(File.class);
-        OCREngine oCREngine = mock(OCREngine.class);
-        DocumentScannerConf documentScannerConf = mock(DocumentScannerConf.class);
-        MainPanelScanResultPanelFetcher fetcher = new MainPanelScanResultPanelFetcher(new DefaultOCRSelectPanelPanel(oCRSelectPanels,
-                documentFile,
-                oCREngine,
-                documentScannerConf));
-        byte[] data = fetcher.fetch();
-        EntityA entityA = new EntityA(1L, data);
-        EntityA entityA2 = new EntityA(3L, data);
-        EntityB entityB = new EntityB(2L, imageIcons);
-        EntityB entityB2 = new EntityB(4L, imageIcons);
+        data = outputStream.toByteArray();
+
+        EntityByteArray entityA = new EntityByteArray(1L, data);
+        EntityByteArray entityA2 = new EntityByteArray(3L, data);
+        EntityImageIcon entityB = new EntityImageIcon(2L, imageIcons);
+        EntityImageIcon entityB2 = new EntityImageIcon(4L, imageIcons);
+        EntityImageWrapper entityC1 = new EntityImageWrapper(imageWrappers);
+        EntityImageWrapper entityC2 = new EntityImageWrapper(imageWrappers);
         long time0 = System.currentTimeMillis();
         storage.store(entityA);
         long time1 = System.currentTimeMillis();
@@ -148,6 +156,12 @@ public class ImageStorageIT {
         storage.store(entityB2);
         long time4 = System.currentTimeMillis();
         LOGGER.info(String.format("time for storing entityB2: %d", time4-time3));
+        storage.store(entityC1);
+        long time5 = System.currentTimeMillis();
+        LOGGER.info(String.format("time for storing entityC1: %d", time5-time4));
+        storage.store(entityC2);
+        long time6 = System.currentTimeMillis();
+        LOGGER.info(String.format("time for storing entityC2: %d", time6-time5));
         LOGGER.info(String.format("size of entityA's data: %d KiB", entityA.getData().length/1024));
 
         long randomSeed = System.currentTimeMillis();
@@ -155,75 +169,42 @@ public class ImageStorageIT {
         Random random = new Random(randomSeed);
         byte[] referenceBytes = new byte[data.length];
         random.nextBytes(referenceBytes);
-        EntityA entityA3 = new EntityA(5L, referenceBytes);
-        EntityA entityA4 = new EntityA(6L, referenceBytes);
-        long time5 = System.currentTimeMillis();
-        storage.store(entityA3);
-        long time6 = System.currentTimeMillis();
-        LOGGER.info(String.format("time for storing entityA3: %d", time6-time5));
-        storage.store(entityA4);
+        EntityByteArray entityA3 = new EntityByteArray(5L, referenceBytes);
+        EntityByteArray entityA4 = new EntityByteArray(6L, referenceBytes);
         long time7 = System.currentTimeMillis();
-        LOGGER.info(String.format("time for storing entityA4: %d", time7-time6));
+        storage.store(entityA3);
+        long time8 = System.currentTimeMillis();
+        LOGGER.info(String.format("time for storing entityA3: %d", time8-time7));
+        storage.store(entityA4);
+        long time9 = System.currentTimeMillis();
+        LOGGER.info(String.format("time for storing entityA4: %d", time9-time8));
         storage.shutdown();
 
+        //test whether EntityImagerWrapper is deserializable
+        PersistenceStorage storage1 = new DerbyEmbeddedPersistenceStorage(storageConf,
+                persistenceUnitName,
+                1 //parallelQueryCount
+        );
+        storage1.start();
+        List<EntityImageWrapper> queryResults = storage1.runQueryAll(EntityImageWrapper.class);
+        assert queryResults.size() == 2;
+        EntityImageWrapper queryResult0 = queryResults.get(0);
+        List<ImageWrapper> queryResult0Data = queryResult0.getData();
+        for(ImageWrapper queryResult0Datum : queryResult0Data) {
+            LOGGER.info(String.format("inspect image wrapper file %s", queryResult0Datum.getStorageFile()));
+        }
+
         //test PostgreSQL
-        File databaseDirPostgresql = new File("/tmp/image-storage-it-postgresql");
+        File databaseDirPostgresql = File.createTempFile(ImageStorageIT.class.getSimpleName(), "postgresql-database-dir");
+        databaseDirPostgresql.delete();
+        databaseDirPostgresql.mkdirs();
+        LOGGER.debug(String.format("PostgreSQL database directory is %s", databaseDirPostgresql.getAbsolutePath()));
         String initdb = "/usr/lib/postgresql/9.5/bin/initdb";
         String postgres = "/usr/lib/postgresql/9.5/bin/postgres";
         String createdb = "createdb";
         String databaseName = "image-storage-it";
         String username = "docu";
         String password = "docu";
-        File passwordFile = File.createTempFile("image-storage-it-postgres", "suffix");
-        Files.write(Paths.get(passwordFile.getAbsolutePath()), password.getBytes(), StandardOpenOption.WRITE);
-        ProcessBuilder initdbProcessBuilder = new ProcessBuilder(initdb, String.format("--username=%s", username),
-                String.format("--pwfile=%s", passwordFile.getAbsolutePath()),
-                databaseDirPostgresql.getAbsolutePath());
-        Process initdbProcess = initdbProcessBuilder.start();
-        initdbProcess.waitFor();
-        //fix `FATAL:  could not create lock file "/var/run/postgresql/.s.PGSQL.5432.lock": Keine Berechtigung`
-        File postgresqlConfFile = new File(databaseDirPostgresql, "postgresql.conf");
-        try {
-            Files.write(Paths.get(postgresqlConfFile.getAbsolutePath()), "\nunix_socket_directories = '/tmp'\n".getBytes(), StandardOpenOption.APPEND);
-        }catch (IOException ex) {
-            LOGGER.error(String.format("unexpected exception during writing to PostgreSQL configuration file '%s', see nested exception for details", postgresqlConfFile.getAbsolutePath()), ex);
-        }
-        IOUtils.copy(initdbProcess.getInputStream(), System.out);
-        IOUtils.copy(initdbProcess.getErrorStream(), System.err);
-        ProcessBuilder postgresProcessBuilder = new ProcessBuilder(postgres,
-                "-D", databaseDirPostgresql.getAbsolutePath(),
-                "-h", "localhost",
-                "-p", "5432");
-        Process postgresProcess = postgresProcessBuilder.start();
-        Thread postgresThread = new Thread(() -> {
-            try {
-                postgresProcess.waitFor();
-                IOUtils.copy(postgresProcess.getInputStream(), System.out);
-                IOUtils.copy(postgresProcess.getErrorStream(), System.err);
-            } catch (InterruptedException | IOException ex) {
-                LOGGER.error("unexpected exception, see nested exception for details", ex);
-            }
-        });
-        postgresThread.start();
-        boolean success = false;
-        while(!success) {
-            LOGGER.info("Running createdb");
-            ProcessBuilder createdbProcessBuilder = new ProcessBuilder(createdb,
-                    String.format("--host=%s", "localhost"),
-                    String.format("--username=%s", username),
-                    databaseName);
-            Process createdbProcess = createdbProcessBuilder.start();
-            createdbProcess.waitFor();
-            IOUtils.copy(createdbProcess.getInputStream(), System.out);
-            IOUtils.copy(createdbProcess.getErrorStream(), System.err);
-            if(createdbProcess.exitValue() == 0) {
-                LOGGER.info("createdb succeeded");
-                success = true;
-            }else {
-                LOGGER.info("createdb failed (server might not be up yet, trying again in 1 s");
-                Thread.sleep(1000);
-            }
-        }
         PostgresqlPersistenceStorageConf postgresqlPersistenceStorageConf = new PostgresqlPersistenceStorageConf(entityClasses,
                 "postgres",
                 schemeChecksumFile);
@@ -234,27 +215,6 @@ public class ImageStorageIT {
                 persistenceUnitName,
                 1 //parallelQueryCount
         );
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            postgresProcess.destroy();
-            try {
-                postgresProcess.waitFor();
-            } catch (InterruptedException ex) {
-                LOGGER.error("waiting for termination of postgres process failed, see nested exception for details", ex);
-            }
-            try {
-                postgresThread.join();
-                //should handle writing to stdout and stderr
-            } catch (InterruptedException ex) {
-                LOGGER.error("unexpected exception, see nested exception for details", ex);
-            }
-            try {
-                FileUtils.deleteDirectory(databaseDirPostgresql);
-                LOGGER.info(String.format("database directory '%s' deleted", databaseDirPostgresql.getAbsolutePath()));
-            } catch (IOException ex) {
-                LOGGER.info(String.format("deletion of database directory '%s' failed, see nested exception for details", databaseDirPostgresql.getAbsolutePath()),
-                         ex);
-            }
-        }));
         time0 = System.currentTimeMillis();
         postgresqlStorage.store(entityA);
         time1 = System.currentTimeMillis();
@@ -271,13 +231,13 @@ public class ImageStorageIT {
         LOGGER.info(String.format("time for storing entityB2: %d", time4-time3));
         LOGGER.info(String.format("size of entityA's data: %d KiB", entityA.getData().length/1024));
 
-        time5 = System.currentTimeMillis();
+        time9 = System.currentTimeMillis();
         postgresqlStorage.store(entityA3);
-        time6 = System.currentTimeMillis();
-        LOGGER.info(String.format("time for storing entityA3: %d", time6-time5));
+        time8 = System.currentTimeMillis();
+        LOGGER.info(String.format("time for storing entityA3: %d", time8-time9));
         postgresqlStorage.store(entityA4);
-        time7 = System.currentTimeMillis();
-        LOGGER.info(String.format("time for storing entityA4: %d", time7-time6));
+        time9 = System.currentTimeMillis();
+        LOGGER.info(String.format("time for storing entityA4: %d", time9-time8));
         postgresqlStorage.shutdown();
         Caching.getCachingProvider().close();
     }
