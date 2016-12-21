@@ -126,7 +126,7 @@ public class ImageStorageIT {
             ImageWrapper imageWrapper = new CachingImageWrapper(databaseDir,
                     image);
             OCRSelectPanel oCRSelectPanel = new DefaultOCRSelectPanel(imageWrapper,
-                    DocumentScannerConf.PREFERRED_WIDTH_DEFAULT);
+                    DocumentScannerConf.PREFERRED_SCAN_RESULT_PANEL_WIDTH_DEFAULT);
             oCRSelectPanels.add(oCRSelectPanel);
             ImageIcon imageIcon = new ImageIcon(image);
             objectOutputStream.writeObject(imageIcon);
