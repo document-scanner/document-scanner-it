@@ -11,6 +11,8 @@
     <logger name="richtercloud" level="DEBUG"/>
     <logger name="richtercloud.document.scanner.gui.DateFormatAutoOCRValueDetectionService" level="INFO"/><!--too much output-->
     <logger name="richtercloud.document.scanner.gui.FormatUtils" level="INFO"/>
+    <logger name="richtercloud.document.scanner.gui.storageconf.MySQLAutoPersistenceStorageConfPanelIT" level="DEBUG"/>
+    <logger name="richtercloud.document.scanner.gui.storageconf.MySQLAutoPersistenceStorageConfPanel" level="TRACE"/>
     <root level="INFO">
         <appender-ref ref="STDOUT" />
     </root>
