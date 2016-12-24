@@ -35,10 +35,10 @@ import javax.cache.Caching;
 import javax.swing.ImageIcon;
 import org.apache.commons.io.FileUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.rendering.ImageType;
+import org.apache.pdfbox.rendering.PDFRenderer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import richtercloud.document.scanner.model.imagewrapper.CachingImageWrapper;
 import richtercloud.document.scanner.gui.DefaultOCRSelectPanel;
 import richtercloud.document.scanner.gui.conf.DocumentScannerConf;
 import richtercloud.document.scanner.ifaces.ImageWrapper;
@@ -46,6 +46,7 @@ import richtercloud.document.scanner.ifaces.OCRSelectPanel;
 import richtercloud.document.scanner.it.entities.EntityByteArray;
 import richtercloud.document.scanner.it.entities.EntityImageIcon;
 import richtercloud.document.scanner.it.entities.EntityImageWrapper;
+import richtercloud.document.scanner.model.imagewrapper.CachingImageWrapper;
 import richtercloud.reflection.form.builder.jpa.storage.DerbyEmbeddedPersistenceStorage;
 import richtercloud.reflection.form.builder.jpa.storage.DerbyEmbeddedPersistenceStorageConf;
 import richtercloud.reflection.form.builder.jpa.storage.PersistenceStorage;
@@ -115,14 +116,14 @@ public class ImageStorageIT {
         InputStream pdfInputStream = new FileInputStream(imageInputFile);
         PDDocument document = PDDocument.load(pdfInputStream);
         @SuppressWarnings("unchecked")
-        List<PDPage> pages = document.getDocumentCatalog().getAllPages();
         List<OCRSelectPanel> oCRSelectPanels = new LinkedList<>();
         List<ImageWrapper> imageWrappers = new LinkedList<>();
         byte[] data;
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
-        for (PDPage page : pages) {
-            BufferedImage image = page.convertToImage();
+        PDFRenderer pdfRenderer = new PDFRenderer(document);
+        for (int page=0; page<document.getNumberOfPages(); page++) {
+            BufferedImage image = pdfRenderer.renderImageWithDPI(page, 300, ImageType.RGB);
             ImageWrapper imageWrapper = new CachingImageWrapper(databaseDir,
                     image);
             OCRSelectPanel oCRSelectPanel = new DefaultOCRSelectPanel(imageWrapper,
