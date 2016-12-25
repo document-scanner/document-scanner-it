@@ -4,7 +4,7 @@
     <parent>
         <groupId>richtercloud</groupId>
         <artifactId>document-scanner-aggregator</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.0-beta</version>
     </parent>
     <artifactId>document-scanner-it</artifactId>
     <packaging>jar</packaging>
@@ -16,12 +16,14 @@
         <richtercloud.document.scanner.hibernate.version>5.0.11.Final</richtercloud.document.scanner.hibernate.version>
     </properties>
     <dependencies>
+        <!--document-scanner dependencies-->
         <dependency>
             <groupId>richtercloud</groupId>
             <artifactId>document-scanner</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${richtercloud.document.scanner.version}</version>
             <type>jar</type>
         </dependency>
+        <!--Other dependencies-->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
