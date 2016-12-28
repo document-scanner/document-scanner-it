@@ -14,6 +14,7 @@
  */
 package richtercloud.document.scanner.gui.storageconf;
 
+import java.io.IOException;
 import static org.junit.Assert.*;
 import org.junit.Test;
 import static org.mockito.Mockito.mock;
@@ -30,7 +31,7 @@ import richtercloud.reflection.form.builder.jpa.storage.MySQLAutoPersistenceStor
 public class MySQLAutoPersistenceStorageConfPanelIT {
     private final static Logger LOGGER = LoggerFactory.getLogger(MySQLAutoPersistenceStorageConfPanelIT.class);
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         testMySQLDownload();
     }
 
@@ -38,7 +39,7 @@ public class MySQLAutoPersistenceStorageConfPanelIT {
      * Test of mySQLDownload method, of class MySQLAutoPersistenceStorageConfPanel.
      */
     @Test
-    public static void testMySQLDownload() {
+    public static void testMySQLDownload() throws IOException {
         LOGGER.debug("Running download test for Linux 32-bit");
         //Linux 32-bit
         String downloadURL = MySQLAutoPersistenceStorageConfPanel.DOWNLOAD_URL_LINUX_32;
