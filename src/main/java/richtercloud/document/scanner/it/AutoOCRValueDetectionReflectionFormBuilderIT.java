@@ -46,6 +46,7 @@ import richtercloud.document.scanner.components.annotations.Tags;
 import richtercloud.document.scanner.components.tag.TagStorage;
 import richtercloud.document.scanner.gui.DefaultMainPanel;
 import richtercloud.document.scanner.gui.DocumentScannerFieldHandler;
+import richtercloud.document.scanner.gui.DocumentScannerInitialQueryTextGenerator;
 import richtercloud.reflection.form.builder.jpa.storage.ReflectionFieldInitializer;
 import richtercloud.document.scanner.gui.conf.DocumentScannerConf;
 import richtercloud.document.scanner.ifaces.MainPanel;
@@ -63,6 +64,7 @@ import richtercloud.reflection.form.builder.jpa.JPACachedFieldRetriever;
 import richtercloud.reflection.form.builder.jpa.WarningHandler;
 import richtercloud.reflection.form.builder.jpa.idapplier.GeneratedValueIdApplier;
 import richtercloud.reflection.form.builder.jpa.idapplier.IdApplier;
+import richtercloud.reflection.form.builder.jpa.panels.InitialQueryTextGenerator;
 import richtercloud.reflection.form.builder.jpa.storage.PersistenceStorage;
 import richtercloud.reflection.form.builder.typehandler.TypeHandler;
 import richtercloud.reflection.form.builder.jpa.storage.FieldInitializer;
@@ -124,6 +126,7 @@ public class AutoOCRValueDetectionReflectionFormBuilderIT {
             TagStorage tagStorage = mock(TagStorage.class);
             Map<Class<?>, WarningHandler<?>> warningHandlers = new HashMap<>();
             FieldInitializer fieldInitializer = new ReflectionFieldInitializer(fieldRetriever);
+            InitialQueryTextGenerator initialQueryTextGenerator = new DocumentScannerInitialQueryTextGenerator();
             MainPanel mainPanel = new DefaultMainPanel(entityClasses,
                     primaryClassSelection,
                     storage,
@@ -140,7 +143,8 @@ public class AutoOCRValueDetectionReflectionFormBuilderIT {
                     tagStorage,
                     idApplier,
                     warningHandlers,
-                    fieldInitializer);
+                    fieldInitializer,
+                    initialQueryTextGenerator);
             int initialQueryLimit = 20;
             String bidirectionalHelpDialogTitle = "Title";
             DocumentScannerFieldHandler fieldHandler = DocumentScannerFieldHandler.create(amountMoneyUsageStatisticsStorage,
@@ -163,7 +167,8 @@ public class AutoOCRValueDetectionReflectionFormBuilderIT {
                     warningHandlers,
                     initialQueryLimit,
                     bidirectionalHelpDialogTitle,
-                    fieldInitializer);
+                    fieldInitializer,
+                    initialQueryTextGenerator);
 
             Object entityToUpdate = testClass.newInstance();
             ReflectionFormPanel testPanel = instance.transformEntityClass(testClass,
