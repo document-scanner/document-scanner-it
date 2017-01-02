@@ -144,7 +144,9 @@ public class AutoOCRValueDetectionReflectionFormBuilderIT {
                     idApplier,
                     warningHandlers,
                     fieldInitializer,
-                    initialQueryTextGenerator);
+                    initialQueryTextGenerator,
+                    fieldRetriever,
+                    fieldRetriever);
             int initialQueryLimit = 20;
             String bidirectionalHelpDialogTitle = "Title";
             DocumentScannerFieldHandler fieldHandler = DocumentScannerFieldHandler.create(amountMoneyUsageStatisticsStorage,
@@ -154,6 +156,7 @@ public class AutoOCRValueDetectionReflectionFormBuilderIT {
                     confirmMessageHandler,
                     typeHandlerMapping,
                     storage,
+                    fieldRetriever,
                     fieldRetriever,
                     oCRResultPanelFetcher,
                     scanResultPanelFetcher,
