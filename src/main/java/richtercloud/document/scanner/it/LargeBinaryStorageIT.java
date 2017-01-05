@@ -23,6 +23,8 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import richtercloud.document.scanner.it.entities.LargeBinaryEntity;
+import richtercloud.reflection.form.builder.FieldRetriever;
+import richtercloud.reflection.form.builder.jpa.JPACachedFieldRetriever;
 import richtercloud.reflection.form.builder.jpa.storage.PersistenceStorage;
 import richtercloud.reflection.form.builder.jpa.storage.PostgresqlAutoPersistenceStorage;
 import richtercloud.reflection.form.builder.jpa.storage.PostgresqlAutoPersistenceStorageConf;
@@ -45,7 +47,7 @@ public class LargeBinaryStorageIT {
         databaseDir.delete();
         File schemeChecksumFile = File.createTempFile("document-scanner-large-binary-it", null);
         schemeChecksumFile.delete();
-        String persistenceUnitName = "richtercloud_document-scanner-it_jar_1.0-SNAPSHOTPU";
+        String persistenceUnitName = "document-scanner-it";
         String username = "document-scanner";
         String password = "document-scanner";
         String databaseName = "document-scanner";
@@ -55,9 +57,11 @@ public class LargeBinaryStorageIT {
                 databaseDir.getAbsolutePath());
         storageConf.setPassword(password);
         storageConf.setDatabaseName(databaseName);
+        FieldRetriever fieldRetriever = new JPACachedFieldRetriever();
         PersistenceStorage storage = new PostgresqlAutoPersistenceStorage(storageConf,
                 persistenceUnitName,
-                1 //parallelQueryCount
+                1, //parallelQueryCount
+                fieldRetriever
         );
         long randomSeed = System.currentTimeMillis();
         LOGGER.debug(String.format("random seed is %d", randomSeed));
@@ -77,7 +81,8 @@ public class LargeBinaryStorageIT {
         Thread.sleep(2000);
         storage = new PostgresqlAutoPersistenceStorage(storageConf,
                 persistenceUnitName,
-                1 //parallelQueryCount
+                1, //parallelQueryCount
+                fieldRetriever
         );
         LOGGER.debug("querying large binary entity");
         storage.runQueryAll(LargeBinaryEntity.class);

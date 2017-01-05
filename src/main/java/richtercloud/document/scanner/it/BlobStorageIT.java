@@ -35,6 +35,8 @@ import richtercloud.document.scanner.it.entities.EntityBlob;
 import richtercloud.document.scanner.it.entities.EntityImageWrapper;
 import richtercloud.message.handler.LoggerMessageHandler;
 import richtercloud.message.handler.MessageHandler;
+import richtercloud.reflection.form.builder.FieldRetriever;
+import richtercloud.reflection.form.builder.jpa.JPACachedFieldRetriever;
 import richtercloud.reflection.form.builder.jpa.storage.MySQLAutoPersistenceStorage;
 import richtercloud.reflection.form.builder.jpa.storage.MySQLAutoPersistenceStorageConf;
 import richtercloud.reflection.form.builder.jpa.storage.PersistenceStorage;
@@ -56,7 +58,7 @@ public class BlobStorageIT {
         databaseDir.delete();
         File schemeChecksumFile = File.createTempFile("document-scanner-blob-it", null);
         schemeChecksumFile.delete();
-        String persistenceUnitName = "richtercloud_document-scanner-it_jar_1.0-SNAPSHOTPU";
+        String persistenceUnitName = "document-scanner-it";
         String username = "document-scanner";
         String password = "document-scanner";
         String databaseName = "document-scanner";
@@ -84,10 +86,12 @@ public class BlobStorageIT {
         storageConf.setPassword(password);
         storageConf.setDatabaseName(databaseName);
         storageConf.setMyCnfFilePath(myCnfFile.getAbsolutePath());
+        FieldRetriever fieldRetriever = new JPACachedFieldRetriever();
         PersistenceStorage storage = new MySQLAutoPersistenceStorage(storageConf,
                 persistenceUnitName,
                 1, //parallelQueryCount
-                messageHandler
+                messageHandler,
+                fieldRetriever
         );
         storage.start();
         long randomSeed = System.currentTimeMillis();
@@ -117,7 +121,8 @@ public class BlobStorageIT {
         storage = new MySQLAutoPersistenceStorage(storageConf,
                 persistenceUnitName,
                 1, //parallelQueryCount
-                messageHandler
+                messageHandler,
+                fieldRetriever
         );
         storage.start();
         LOGGER.debug("querying large binary entity");

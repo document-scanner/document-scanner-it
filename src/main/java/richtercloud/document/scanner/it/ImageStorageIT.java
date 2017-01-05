@@ -47,6 +47,8 @@ import richtercloud.document.scanner.it.entities.EntityByteArray;
 import richtercloud.document.scanner.it.entities.EntityImageIcon;
 import richtercloud.document.scanner.it.entities.EntityImageWrapper;
 import richtercloud.document.scanner.model.imagewrapper.CachingImageWrapper;
+import richtercloud.reflection.form.builder.FieldRetriever;
+import richtercloud.reflection.form.builder.jpa.JPACachedFieldRetriever;
 import richtercloud.reflection.form.builder.jpa.storage.DerbyEmbeddedPersistenceStorage;
 import richtercloud.reflection.form.builder.jpa.storage.DerbyEmbeddedPersistenceStorageConf;
 import richtercloud.reflection.form.builder.jpa.storage.PersistenceStorage;
@@ -88,10 +90,12 @@ public class ImageStorageIT {
         DerbyEmbeddedPersistenceStorageConf storageConf = new DerbyEmbeddedPersistenceStorageConf(entityClasses,
                 databaseDir.getAbsolutePath(),
                 schemeChecksumFile);
-        String persistenceUnitName = "richtercloud_document-scanner-it_jar_1.0-SNAPSHOTPU";
+        String persistenceUnitName = "document-scanner-it";
+        FieldRetriever fieldRetriever = new JPACachedFieldRetriever();
         final PersistenceStorage storage = new DerbyEmbeddedPersistenceStorage(storageConf,
                 persistenceUnitName,
-                1 //parallelQueryCount
+                1, //parallelQueryCount
+                fieldRetriever
         );
         storage.start();
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
@@ -184,7 +188,8 @@ public class ImageStorageIT {
         //test whether EntityImagerWrapper is deserializable
         PersistenceStorage storage1 = new DerbyEmbeddedPersistenceStorage(storageConf,
                 persistenceUnitName,
-                1 //parallelQueryCount
+                1, //parallelQueryCount
+                fieldRetriever
         );
         storage1.start();
         List<EntityImageWrapper> queryResults = storage1.runQueryAll(EntityImageWrapper.class);
@@ -214,7 +219,8 @@ public class ImageStorageIT {
         postgresqlPersistenceStorageConf.setPassword(password);
         PersistenceStorage postgresqlStorage = new PostgresqlPersistenceStorage(postgresqlPersistenceStorageConf,
                 persistenceUnitName,
-                1 //parallelQueryCount
+                1, //parallelQueryCount
+                fieldRetriever
         );
         time0 = System.currentTimeMillis();
         postgresqlStorage.store(entityA);
