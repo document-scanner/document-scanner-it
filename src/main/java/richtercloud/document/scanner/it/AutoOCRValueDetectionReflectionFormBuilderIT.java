@@ -16,6 +16,8 @@ package richtercloud.document.scanner.it;
 
 import java.awt.EventQueue;
 import java.awt.Window;
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -35,10 +37,10 @@ import javax.swing.JFrame;
 import javax.swing.WindowConstants;
 import org.jscience.economics.money.Money;
 import org.jscience.physics.amount.Amount;
+import static org.mockito.Mockito.*;
 import richtercloud.document.scanner.components.AutoOCRValueDetectionReflectionFormBuilder;
 import richtercloud.document.scanner.components.OCRResultPanelFetcher;
 import richtercloud.document.scanner.components.ScanResultPanelFetcher;
-import static org.mockito.Mockito.*;
 import richtercloud.document.scanner.components.annotations.CommunicationTree;
 import richtercloud.document.scanner.components.annotations.OCRResult;
 import richtercloud.document.scanner.components.annotations.ScanResult;
@@ -46,8 +48,6 @@ import richtercloud.document.scanner.components.annotations.Tags;
 import richtercloud.document.scanner.components.tag.TagStorage;
 import richtercloud.document.scanner.gui.DefaultMainPanel;
 import richtercloud.document.scanner.gui.DocumentScannerFieldHandler;
-import richtercloud.document.scanner.gui.DocumentScannerInitialQueryTextGenerator;
-import richtercloud.reflection.form.builder.jpa.storage.ReflectionFieldInitializer;
 import richtercloud.document.scanner.gui.conf.DocumentScannerConf;
 import richtercloud.document.scanner.ifaces.MainPanel;
 import richtercloud.document.scanner.ifaces.OCREngine;
@@ -64,10 +64,14 @@ import richtercloud.reflection.form.builder.jpa.JPACachedFieldRetriever;
 import richtercloud.reflection.form.builder.jpa.WarningHandler;
 import richtercloud.reflection.form.builder.jpa.idapplier.GeneratedValueIdApplier;
 import richtercloud.reflection.form.builder.jpa.idapplier.IdApplier;
-import richtercloud.reflection.form.builder.jpa.panels.InitialQueryTextGenerator;
-import richtercloud.reflection.form.builder.jpa.storage.PersistenceStorage;
-import richtercloud.reflection.form.builder.typehandler.TypeHandler;
+import richtercloud.reflection.form.builder.jpa.panels.XMLFileQueryHistoryEntryStorageFactory;
+import richtercloud.reflection.form.builder.jpa.panels.QueryHistoryEntryStorage;
+import richtercloud.reflection.form.builder.jpa.panels.QueryHistoryEntryStorageCreationException;
+import richtercloud.reflection.form.builder.jpa.panels.QueryHistoryEntryStorageFactory;
 import richtercloud.reflection.form.builder.jpa.storage.FieldInitializer;
+import richtercloud.reflection.form.builder.jpa.storage.PersistenceStorage;
+import richtercloud.reflection.form.builder.jpa.storage.ReflectionFieldInitializer;
+import richtercloud.reflection.form.builder.typehandler.TypeHandler;
 
 /**
  * Integration test for resizability of class components.
@@ -78,7 +82,7 @@ public class AutoOCRValueDetectionReflectionFormBuilderIT {
     /**
      * Test of getComboBoxModelMap method, of class AutoOCRValueDetectionReflectionFormBuilder.
      */
-    public static void testResizability() throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, FieldHandlingException, InterruptedException {
+    public static void testResizability() throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, FieldHandlingException, InterruptedException, IOException, QueryHistoryEntryStorageCreationException {
         //There's no mocking in integration tests, but for the GUI test it's
         //fine.
         Set<Class<?>> testClasses = new HashSet<>(Arrays.asList(DocumentScannerExtensionsTestClass.class,
@@ -126,7 +130,13 @@ public class AutoOCRValueDetectionReflectionFormBuilderIT {
             TagStorage tagStorage = mock(TagStorage.class);
             Map<Class<?>, WarningHandler<?>> warningHandlers = new HashMap<>();
             FieldInitializer fieldInitializer = new ReflectionFieldInitializer(fieldRetriever);
-            InitialQueryTextGenerator initialQueryTextGenerator = new DocumentScannerInitialQueryTextGenerator();
+            File entryStorageFile = File.createTempFile(AutoOCRValueDetectionReflectionFormBuilderIT.class.getSimpleName(),
+                    null);
+            QueryHistoryEntryStorageFactory entryStorageFactory = new XMLFileQueryHistoryEntryStorageFactory(entryStorageFile,
+                    entityClasses,
+                    false,
+                    messageHandler);
+            QueryHistoryEntryStorage initialQueryTextGenerator = entryStorageFactory.create();
             MainPanel mainPanel = new DefaultMainPanel(entityClasses,
                     primaryClassSelection,
                     storage,
@@ -286,7 +296,7 @@ public class AutoOCRValueDetectionReflectionFormBuilderIT {
     public static void main(String[] args) {
         try {
             testResizability();
-        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | FieldHandlingException | InterruptedException ex) {
+        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | FieldHandlingException | InterruptedException | IOException | QueryHistoryEntryStorageCreationException ex) {
             throw new RuntimeException(ex);
         }
     }
