@@ -17,6 +17,7 @@ package richtercloud.reflection.form.builder.jpa;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -65,7 +66,7 @@ public class DocumentScannerJPAReflectionFormBuilderIT {
     private final static Logger LOGGER = LoggerFactory.getLogger(DocumentScannerJPAReflectionFormBuilderIT.class);
 
     @Test
-    public void testOnFieldUpdate() throws IOException, StorageCreationException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException, StorageConfValidationException, StorageException, SQLException {
+    public void testOnFieldUpdate() throws IOException, StorageCreationException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException, StorageConfValidationException, StorageException, SQLException, InvocationTargetException {
         Set<Class<?>> entityClasses = new HashSet<>(Arrays.asList(Document.class,
                 Payment.class));
         File databaseDir = File.createTempFile(DocumentScannerJPAReflectionFormBuilderIT.class.getSimpleName(), null);
@@ -97,12 +98,14 @@ public class DocumentScannerJPAReflectionFormBuilderIT {
             }
         };
         IdApplier idApplier = new GeneratedValueIdApplier();
+        IdGenerator idGenerator = MemorySequentialIdGenerator.getInstance();
         JPAReflectionFormBuilder instance = new JPAReflectionFormBuilder(storage,
                 "dialog title",
                 messageHandler,
                 confirmMessageHandler,
                 fieldRetriever,
                 idApplier,
+                idGenerator,
                 new HashMap<>() //warningHandlers
         );
 

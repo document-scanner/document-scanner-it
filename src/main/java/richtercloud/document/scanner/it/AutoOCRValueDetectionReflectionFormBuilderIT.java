@@ -18,7 +18,6 @@ import java.awt.EventQueue;
 import java.awt.Window;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -56,18 +55,20 @@ import richtercloud.document.scanner.setter.ValueSetter;
 import richtercloud.message.handler.ConfirmMessageHandler;
 import richtercloud.message.handler.MessageHandler;
 import richtercloud.reflection.form.builder.ReflectionFormPanel;
+import richtercloud.reflection.form.builder.TransformationException;
 import richtercloud.reflection.form.builder.components.money.AmountMoneyCurrencyStorage;
 import richtercloud.reflection.form.builder.components.money.AmountMoneyExchangeRateRetriever;
 import richtercloud.reflection.form.builder.components.money.AmountMoneyUsageStatisticsStorage;
-import richtercloud.reflection.form.builder.fieldhandler.FieldHandlingException;
+import richtercloud.reflection.form.builder.jpa.IdGenerator;
 import richtercloud.reflection.form.builder.jpa.JPACachedFieldRetriever;
+import richtercloud.reflection.form.builder.jpa.MemorySequentialIdGenerator;
 import richtercloud.reflection.form.builder.jpa.WarningHandler;
 import richtercloud.reflection.form.builder.jpa.idapplier.GeneratedValueIdApplier;
 import richtercloud.reflection.form.builder.jpa.idapplier.IdApplier;
-import richtercloud.reflection.form.builder.jpa.panels.XMLFileQueryHistoryEntryStorageFactory;
 import richtercloud.reflection.form.builder.jpa.panels.QueryHistoryEntryStorage;
 import richtercloud.reflection.form.builder.jpa.panels.QueryHistoryEntryStorageCreationException;
 import richtercloud.reflection.form.builder.jpa.panels.QueryHistoryEntryStorageFactory;
+import richtercloud.reflection.form.builder.jpa.panels.XMLFileQueryHistoryEntryStorageFactory;
 import richtercloud.reflection.form.builder.jpa.storage.FieldInitializer;
 import richtercloud.reflection.form.builder.jpa.storage.PersistenceStorage;
 import richtercloud.reflection.form.builder.jpa.storage.ReflectionFieldInitializer;
@@ -82,7 +83,7 @@ public class AutoOCRValueDetectionReflectionFormBuilderIT {
     /**
      * Test of getComboBoxModelMap method, of class AutoOCRValueDetectionReflectionFormBuilder.
      */
-    public static void testResizability() throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, FieldHandlingException, InterruptedException, IOException, QueryHistoryEntryStorageCreationException {
+    public static void testResizability() throws IOException, QueryHistoryEntryStorageCreationException, InstantiationException, IllegalAccessException, TransformationException {
         //There's no mocking in integration tests, but for the GUI test it's
         //fine.
         Set<Class<?>> testClasses = new HashSet<>(Arrays.asList(DocumentScannerExtensionsTestClass.class,
@@ -107,11 +108,15 @@ public class AutoOCRValueDetectionReflectionFormBuilderIT {
             ConfirmMessageHandler confirmMessageHandler = mock(ConfirmMessageHandler.class);
             JPACachedFieldRetriever fieldRetriever = new JPACachedFieldRetriever();
             IdApplier idApplier = new GeneratedValueIdApplier();
+            IdGenerator idGenerator = MemorySequentialIdGenerator.getInstance();
 
             AutoOCRValueDetectionReflectionFormBuilder instance = new AutoOCRValueDetectionReflectionFormBuilder(storage,
                     "fieldDescriptionDialogTitle",
-                    messageHandler, confirmMessageHandler,
-                    fieldRetriever, idApplier,
+                    messageHandler,
+                    confirmMessageHandler,
+                    fieldRetriever,
+                    idApplier,
+                    idGenerator,
                     new HashMap<Class<?>, WarningHandler<?>>(), //warningHandlers
                     new HashMap<Class<? extends JComponent>, ValueSetter<?,?>>() //valueSetterMapping
             );
@@ -152,6 +157,7 @@ public class AutoOCRValueDetectionReflectionFormBuilderIT {
                     oCRProgressMonitorParent,
                     tagStorage,
                     idApplier,
+                    idGenerator,
                     warningHandlers,
                     fieldInitializer,
                     initialQueryTextGenerator,
@@ -296,7 +302,7 @@ public class AutoOCRValueDetectionReflectionFormBuilderIT {
     public static void main(String[] args) {
         try {
             testResizability();
-        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | FieldHandlingException | InterruptedException | IOException | QueryHistoryEntryStorageCreationException ex) {
+        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | IOException | QueryHistoryEntryStorageCreationException | TransformationException ex) {
             throw new RuntimeException(ex);
         }
     }
