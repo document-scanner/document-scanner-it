@@ -80,7 +80,7 @@ public class DocumentScannerJPAReflectionFormBuilderIT {
         DerbyEmbeddedPersistenceStorageConf storageConf = new DerbyEmbeddedPersistenceStorageConf(entityClasses, databaseName, schemeChecksumFile);
         String persistenceUnitName = "document-scanner-it";
         JPAFieldRetriever fieldRetriever = new JPACachedFieldRetriever();
-        PersistenceStorage storage = new DerbyEmbeddedPersistenceStorage(storageConf,
+        PersistenceStorage<Long> storage = new DerbyEmbeddedPersistenceStorage(storageConf,
                 persistenceUnitName,
                 1, //parallelQueryCount
                 fieldRetriever);
