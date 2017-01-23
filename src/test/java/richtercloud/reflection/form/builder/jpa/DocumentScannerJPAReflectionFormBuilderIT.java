@@ -66,7 +66,7 @@ public class DocumentScannerJPAReflectionFormBuilderIT {
     private final static Logger LOGGER = LoggerFactory.getLogger(DocumentScannerJPAReflectionFormBuilderIT.class);
 
     @Test
-    public void testOnFieldUpdate() throws IOException, StorageCreationException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException, StorageConfValidationException, StorageException, SQLException, InvocationTargetException {
+    public void testOnFieldUpdate() throws IOException, StorageCreationException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException, StorageConfValidationException, StorageException, SQLException, InvocationTargetException, IdGenerationException {
         Set<Class<?>> entityClasses = new HashSet<>(Arrays.asList(Document.class,
                 Payment.class));
         File databaseDir = File.createTempFile(DocumentScannerJPAReflectionFormBuilderIT.class.getSimpleName(), null);
@@ -98,7 +98,7 @@ public class DocumentScannerJPAReflectionFormBuilderIT {
             }
         };
         IdApplier idApplier = new GeneratedValueIdApplier();
-        IdGenerator idGenerator = MemorySequentialIdGenerator.getInstance();
+        IdGenerator<Long> idGenerator = MemorySequentialIdGenerator.getInstance();
         JPAReflectionFormBuilder instance = new JPAReflectionFormBuilder(storage,
                 "dialog title",
                 messageHandler,
@@ -153,6 +153,14 @@ public class DocumentScannerJPAReflectionFormBuilderIT {
                 new Date(),
                 senderAccount,
                 recipientAccount);
+        location.setId(idGenerator.getNextId(location));
+        sender.setId(idGenerator.getNextId(sender));
+        recipient.setId(idGenerator.getNextId(recipient));
+        senderAccount.setId(idGenerator.getNextId(senderAccount));
+        recipientAccount.setId(idGenerator.getNextId(recipientAccount));
+        entityB1.setId(idGenerator.getNextId(entityB1));
+        entityB2.setId(idGenerator.getNextId(entityB2));
+        entityA1.setId(idGenerator.getNextId(entityA1));
         storage.store(location);
         storage.store(sender);
         storage.store(recipient);
@@ -160,8 +168,9 @@ public class DocumentScannerJPAReflectionFormBuilderIT {
         storage.store(recipientAccount);
         storage.store(entityB1);
         storage.store(entityB2);
-        FieldUpdateEvent event = new MappedFieldUpdateEvent(new LinkedList(Arrays.asList(entityB1, entityB2)),
-                Payment.class.getDeclaredField("documents") //mappedField
+        Field mappedField = Payment.class.getDeclaredField("documents");
+        FieldUpdateEvent event = new MappedFieldUpdateEvent<>(new LinkedList<>(Arrays.asList(entityB1, entityB2)),
+                mappedField
         );
             //only MappedFieldUpdateEvents are interesting
         Field field = Document.class.getDeclaredField("payments");
