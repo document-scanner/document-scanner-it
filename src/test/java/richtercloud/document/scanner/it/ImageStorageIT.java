@@ -114,7 +114,9 @@ public class ImageStorageIT {
             } catch (IOException ex) {
                 java.util.logging.Logger.getLogger(ImageStorageIT.class.getName()).log(Level.SEVERE, null, ex);
             }
-        }));
+        },
+                String.format("%s shutdown hook", ImageStorageIT.class.getSimpleName())
+        ));
         File imageInputFile = new File(ImageStorageIT.class.getResource("/image_data.pdf").getFile());
         List<ImageIcon> imageIcons = new LinkedList<>();
         InputStream pdfInputStream = new FileInputStream(imageInputFile);
