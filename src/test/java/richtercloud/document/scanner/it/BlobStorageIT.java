@@ -35,7 +35,6 @@ import richtercloud.document.scanner.it.entities.EntityBlob;
 import richtercloud.document.scanner.it.entities.EntityImageWrapper;
 import richtercloud.message.handler.LoggerMessageHandler;
 import richtercloud.message.handler.MessageHandler;
-import richtercloud.reflection.form.builder.FieldRetriever;
 import richtercloud.reflection.form.builder.jpa.JPACachedFieldRetriever;
 import richtercloud.reflection.form.builder.jpa.storage.MySQLAutoPersistenceStorage;
 import richtercloud.reflection.form.builder.jpa.storage.MySQLAutoPersistenceStorageConf;
@@ -43,6 +42,7 @@ import richtercloud.reflection.form.builder.jpa.storage.PersistenceStorage;
 import richtercloud.reflection.form.builder.storage.StorageConfValidationException;
 import richtercloud.reflection.form.builder.storage.StorageCreationException;
 import richtercloud.reflection.form.builder.storage.StorageException;
+import richtercloud.validation.tools.FieldRetriever;
 
 /**
  *

@@ -47,7 +47,6 @@ import richtercloud.document.scanner.it.entities.EntityByteArray;
 import richtercloud.document.scanner.it.entities.EntityImageIcon;
 import richtercloud.document.scanner.it.entities.EntityImageWrapper;
 import richtercloud.document.scanner.model.imagewrapper.CachingImageWrapper;
-import richtercloud.reflection.form.builder.FieldRetriever;
 import richtercloud.reflection.form.builder.jpa.JPACachedFieldRetriever;
 import richtercloud.reflection.form.builder.jpa.storage.DerbyEmbeddedPersistenceStorage;
 import richtercloud.reflection.form.builder.jpa.storage.DerbyEmbeddedPersistenceStorageConf;
@@ -57,6 +56,7 @@ import richtercloud.reflection.form.builder.jpa.storage.PostgresqlPersistenceSto
 import richtercloud.reflection.form.builder.storage.StorageConfValidationException;
 import richtercloud.reflection.form.builder.storage.StorageCreationException;
 import richtercloud.reflection.form.builder.storage.StorageException;
+import richtercloud.validation.tools.FieldRetriever;
 
 /**
  *

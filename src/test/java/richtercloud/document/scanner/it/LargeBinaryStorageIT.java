@@ -23,7 +23,6 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import richtercloud.document.scanner.it.entities.LargeBinaryEntity;
-import richtercloud.reflection.form.builder.FieldRetriever;
 import richtercloud.reflection.form.builder.jpa.JPACachedFieldRetriever;
 import richtercloud.reflection.form.builder.jpa.storage.PersistenceStorage;
 import richtercloud.reflection.form.builder.jpa.storage.PostgresqlAutoPersistenceStorage;
@@ -31,6 +30,7 @@ import richtercloud.reflection.form.builder.jpa.storage.PostgresqlAutoPersistenc
 import richtercloud.reflection.form.builder.storage.StorageConfValidationException;
 import richtercloud.reflection.form.builder.storage.StorageCreationException;
 import richtercloud.reflection.form.builder.storage.StorageException;
+import richtercloud.validation.tools.FieldRetriever;
 
 /**
  * Shows that freeing of memory after {@link PersistenceStorage#shutdown() }
