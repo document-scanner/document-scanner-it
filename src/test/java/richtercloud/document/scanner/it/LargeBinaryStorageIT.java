@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import richtercloud.document.scanner.it.entities.LargeBinaryEntity;
@@ -51,10 +52,17 @@ public class LargeBinaryStorageIT {
         String username = "document-scanner";
         String password = "document-scanner";
         String databaseName = "document-scanner";
+        Pair<String, String> bestPostgresqlBaseDir = PostgresqlAutoPersistenceStorageConf.findBestInitialPostgresqlBasePath();
+            //@TODO: add discovery for other OS and allow specification as system property
+        if(bestPostgresqlBaseDir == null) {
+            throw new IllegalArgumentException("no PostgreSQL initdb binary could be found (currently only Debian-based systems with PostgreSQL binaries in /usr/lib/postgresql/[version] are supported.");
+        }
         PostgresqlAutoPersistenceStorageConf storageConf = new PostgresqlAutoPersistenceStorageConf(entityClasses,
                 username,
                 schemeChecksumFile,
-                databaseDir.getAbsolutePath());
+                databaseDir.getAbsolutePath(),
+                bestPostgresqlBaseDir.getKey(),
+                bestPostgresqlBaseDir.getValue());
         storageConf.setPassword(password);
         storageConf.setDatabaseName(databaseName);
         FieldRetriever fieldRetriever = new JPACachedFieldRetriever();
