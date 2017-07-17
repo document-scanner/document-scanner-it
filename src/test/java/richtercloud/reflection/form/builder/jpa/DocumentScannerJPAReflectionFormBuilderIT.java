@@ -41,9 +41,9 @@ import richtercloud.document.scanner.model.FinanceAccount;
 import richtercloud.document.scanner.model.Location;
 import richtercloud.document.scanner.model.Payment;
 import richtercloud.message.handler.ConfirmMessageHandler;
-import richtercloud.message.handler.LoggerMessageHandler;
+import richtercloud.message.handler.IssueHandler;
+import richtercloud.message.handler.LoggerIssueHandler;
 import richtercloud.message.handler.Message;
-import richtercloud.message.handler.MessageHandler;
 import richtercloud.reflection.form.builder.fieldhandler.FieldUpdateEvent;
 import richtercloud.reflection.form.builder.fieldhandler.MappedFieldUpdateEvent;
 import richtercloud.reflection.form.builder.jpa.idapplier.GeneratedValueIdApplier;
@@ -85,7 +85,7 @@ public class DocumentScannerJPAReflectionFormBuilderIT {
                 1, //parallelQueryCount
                 fieldRetriever);
         storage.start();
-        MessageHandler messageHandler = new LoggerMessageHandler(LOGGER);
+        IssueHandler issueHandler = new LoggerIssueHandler(LOGGER);
         ConfirmMessageHandler confirmMessageHandler = new ConfirmMessageHandler() {
             @Override
             public int confirm(Message message) {
@@ -101,7 +101,7 @@ public class DocumentScannerJPAReflectionFormBuilderIT {
         IdGenerator<Long> idGenerator = MemorySequentialIdGenerator.getInstance();
         JPAReflectionFormBuilder instance = new JPAReflectionFormBuilder(storage,
                 "dialog title",
-                messageHandler,
+                issueHandler,
                 confirmMessageHandler,
                 fieldRetriever,
                 idApplier,
