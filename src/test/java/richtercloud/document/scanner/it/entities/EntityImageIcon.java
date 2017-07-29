@@ -44,7 +44,7 @@ public class EntityImageIcon implements Serializable {
         this.data = data;
     }
 
-    protected void setId(Long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

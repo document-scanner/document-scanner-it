@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.file.Files;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -41,6 +42,7 @@ import richtercloud.document.scanner.model.FinanceAccount;
 import richtercloud.document.scanner.model.Location;
 import richtercloud.document.scanner.model.Payment;
 import richtercloud.message.handler.ConfirmMessageHandler;
+import richtercloud.message.handler.ConfirmOption;
 import richtercloud.message.handler.IssueHandler;
 import richtercloud.message.handler.LoggerIssueHandler;
 import richtercloud.message.handler.Message;
@@ -69,9 +71,9 @@ public class DocumentScannerJPAReflectionFormBuilderIT {
     public void testOnFieldUpdate() throws IOException, StorageCreationException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException, StorageConfValidationException, StorageException, SQLException, InvocationTargetException, IdGenerationException {
         Set<Class<?>> entityClasses = new HashSet<>(Arrays.asList(Document.class,
                 Payment.class));
-        File databaseDir = File.createTempFile(DocumentScannerJPAReflectionFormBuilderIT.class.getSimpleName(), null);
+        File databaseDir = Files.createTempDirectory(DocumentScannerJPAReflectionFormBuilderIT.class.getSimpleName()).toFile();
         FileUtils.forceDelete(databaseDir);
-        //databaseDir mustn't exist for Apache Derby
+            //databaseDir mustn't exist for Apache Derby
         String databaseName = databaseDir.getAbsolutePath();
         LOGGER.debug(String.format("database directory: %s", databaseName));
         Connection connection = DriverManager.getConnection(String.format("jdbc:derby:%s;create=true", databaseDir.getAbsolutePath()));
@@ -94,6 +96,11 @@ public class DocumentScannerJPAReflectionFormBuilderIT {
 
             @Override
             public String confirm(Message message, String... options) {
+                throw new UnsupportedOperationException("Not supported yet.");
+            }
+
+            @Override
+            public ConfirmOption confirm(Message message, ConfirmOption... options) {
                 throw new UnsupportedOperationException("Not supported yet.");
             }
         };

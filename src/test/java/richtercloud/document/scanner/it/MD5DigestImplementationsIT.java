@@ -19,35 +19,47 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.RandomStringUtils;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * Fills a test file with random data and then runs different MD5 checksum
+ * algorithms on it.
  *
  * @author richter
  */
 public class MD5DigestImplementationsIT {
     private final static Logger LOGGER = LoggerFactory.getLogger(MD5DigestImplementationsIT.class);
-    public final static String DOWNLOAD_URL = "http://dev.mysql.com/get/Downloads/MySQL-5.7/mysql-5.7.16-linux-glibc2.5-x86_64.tar.gz";
 
-    public static void main(String[] args) throws IOException {
+    @Test
+    public void testMD5DigestImplementation() throws IOException {
         //copy classpath resource into file first in order to make certain
         //slow processes visible when reading from file
-        File resourceFile = new File("mysql-5.7.16-linux-glibc2.5-x86_64.tar.gz");
-        if(!resourceFile.exists()) {
-            LOGGER.info(String.format("downloading MySQL from %s", DOWNLOAD_URL));
-            FileOutputStream resourceFileOutputStream = new FileOutputStream(resourceFile);
-            IOUtils.copy(new URL(DOWNLOAD_URL).openStream(),
-                    resourceFileOutputStream);
-        }
+        File resourceFile = Files.createTempFile(MD5DigestImplementationsIT.class.getSimpleName(), //prefix
+                null //suffix
+        ).toFile();
+        int mbCount = 500;
+            //1000MB cause trouble on Travis CI and it's not worth figuring this
+            //out
+        int byteCount = 1024*1024*mbCount;
+        LOGGER.debug(String.format("generating a %d MB random string for the checksum test",
+                mbCount));
+        String randomString = RandomStringUtils.random(byteCount/2);
+            //string is created in memory, but 1GB should be fine, otherwise
+            //implement streaming solution
+        FileOutputStream resourceFileOutputStream = new FileOutputStream(resourceFile);
+        IOUtils.write(randomString, resourceFileOutputStream, Charset.defaultCharset());
         InputStream testInputStream = new FileInputStream(resourceFile);
         long time0 = System.currentTimeMillis();
         org.apache.commons.codec.digest.DigestUtils.md5Hex(testInputStream);
         long time1 = System.currentTimeMillis();
         LOGGER.info(String.format("%s took %s ms", org.apache.commons.codec.digest.DigestUtils.class, time1-time0));
-        testInputStream = MD5DigestImplementationsIT.class.getResourceAsStream("/mysql-5.7.16-linux-glibc2.5-x86_64.tar.gz");
+        testInputStream = new FileInputStream(resourceFile);
         long time2 = System.currentTimeMillis();
         org.springframework.util.DigestUtils.md5DigestAsHex(testInputStream);
         long time3 = System.currentTimeMillis();

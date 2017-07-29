@@ -19,6 +19,13 @@
             <artifactId>document-scanner</artifactId>
             <type>jar</type>
         </dependency>
+        <dependency>
+            <groupId>richtercloud</groupId>
+            <artifactId>document-scanner-demo</artifactId>
+            <version>1.0-beta4</version>
+            <scope>test</scope>
+            <type>jar</type>
+        </dependency>
         <!--Other dependencies-->
         <dependency>
             <groupId>junit</groupId>
@@ -71,6 +78,12 @@
                             <goal>integration-test</goal>
                             <goal>verify</goal>
                         </goals>
+                        <configuration>
+                            <forkMode>always</forkMode>
+                            <argLine>-Xmx12g</argLine>
+                                <!-- Xmx8g is too small for
+                                        LargeBinaryStorageIT -->
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

@@ -19,6 +19,7 @@ import java.sql.Blob;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 
 /**
  *
@@ -30,13 +31,13 @@ public class EntityBlob implements Serializable {
     @Id
     @GeneratedValue
     private Long id;
+    @Lob
     private Blob data;
 
     protected EntityBlob() {
     }
 
-    public EntityBlob(Long id, Blob data) {
-        this.id = id;
+    public EntityBlob(Blob data) {
         this.data = data;
     }
 
