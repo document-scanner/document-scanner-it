@@ -112,7 +112,6 @@ public class DocumentScannerJPAReflectionFormBuilderIT {
                 confirmMessageHandler,
                 fieldRetriever,
                 idApplier,
-                idGenerator,
                 new HashMap<>() //warningHandlers
         );
 

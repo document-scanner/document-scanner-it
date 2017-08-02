@@ -233,7 +233,8 @@ public class ImageStorageIT {
             String username = "docu";
             String password = "docu";
             PostgresqlAutoPersistenceStorageConf postgresqlPersistenceStorageConf = new PostgresqlAutoPersistenceStorageConf(entityClasses,
-                    "postgres", //username
+                    "localhost", //hostname
+                    username, //username
                     password,
                     databaseName,
                     schemeChecksumFile,

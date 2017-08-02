@@ -94,6 +94,7 @@ public class BlobStorageIT {
             myCnfFile.delete(); //need to delete in order to trigger creation of
                 //my.cnf
             MySQLAutoPersistenceStorageConf storageConf = new MySQLAutoPersistenceStorageConf(entityClasses,
+                    "localhost", //hostname
                     username,
                     databaseName,
                     schemeChecksumFile);

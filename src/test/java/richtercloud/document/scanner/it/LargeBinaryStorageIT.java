@@ -67,6 +67,7 @@ public class LargeBinaryStorageIT {
                 throw new IllegalArgumentException("no PostgreSQL initdb binary could be found (currently only Debian-based systems with PostgreSQL binaries in /usr/lib/postgresql/[version] are supported.");
             }
             PostgresqlAutoPersistenceStorageConf storageConf = new PostgresqlAutoPersistenceStorageConf(entityClasses,
+                    "localhost", //hostname
                     username,
                     password,
                     databaseName,
