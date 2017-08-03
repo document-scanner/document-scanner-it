@@ -28,6 +28,8 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import richtercloud.document.scanner.it.entities.LargeBinaryEntity;
+import richtercloud.message.handler.IssueHandler;
+import richtercloud.message.handler.LoggerIssueHandler;
 import richtercloud.reflection.form.builder.jpa.JPACachedFieldRetriever;
 import richtercloud.reflection.form.builder.jpa.MemorySequentialIdGenerator;
 import richtercloud.reflection.form.builder.jpa.storage.PersistenceStorage;
@@ -78,10 +80,12 @@ public class LargeBinaryStorageIT {
                     "createdb" //createdbBinaryPath
             );
             FieldRetriever fieldRetriever = new JPACachedFieldRetriever();
+            IssueHandler issueHandler = new LoggerIssueHandler(LOGGER);
             storage = new PostgresqlAutoPersistenceStorage(storageConf,
                     persistenceUnitName,
                     1, //parallelQueryCount
-                    fieldRetriever
+                    fieldRetriever,
+                    issueHandler
             );
             storage.start();
             long randomSeed = System.currentTimeMillis();
@@ -108,7 +112,8 @@ public class LargeBinaryStorageIT {
             storage = new PostgresqlAutoPersistenceStorage(storageConf,
                     persistenceUnitName,
                     1, //parallelQueryCount
-                    fieldRetriever
+                    fieldRetriever,
+                    issueHandler
             );
             storage.start();
             LOGGER.debug("querying large binary entity");

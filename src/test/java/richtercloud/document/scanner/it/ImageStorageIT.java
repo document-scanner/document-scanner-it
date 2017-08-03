@@ -252,7 +252,8 @@ public class ImageStorageIT {
             PersistenceStorage<Long> postgresqlStorage = new PostgresqlAutoPersistenceStorage(postgresqlPersistenceStorageConf,
                     persistenceUnitName,
                     1, //parallelQueryCount
-                    fieldRetriever
+                    fieldRetriever,
+                    issueHandler
             );
             postgresqlStorage.start();
             time0 = System.currentTimeMillis();
