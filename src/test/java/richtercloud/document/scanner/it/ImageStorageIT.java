@@ -49,6 +49,8 @@ import richtercloud.document.scanner.it.entities.EntityByteArray;
 import richtercloud.document.scanner.it.entities.EntityImageIcon;
 import richtercloud.document.scanner.it.entities.EntityImageWrapper;
 import richtercloud.document.scanner.model.imagewrapper.CachingImageWrapper;
+import richtercloud.message.handler.IssueHandler;
+import richtercloud.message.handler.LoggerIssueHandler;
 import richtercloud.reflection.form.builder.jpa.JPACachedFieldRetriever;
 import richtercloud.reflection.form.builder.jpa.MemorySequentialIdGenerator;
 import richtercloud.reflection.form.builder.jpa.storage.DerbyEmbeddedPersistenceStorage;
@@ -137,17 +139,22 @@ public class ImageStorageIT {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream);
             PDFRenderer pdfRenderer = new PDFRenderer(document);
+            IssueHandler issueHandler = new LoggerIssueHandler(LOGGER);
             for (int page=0; page<document.getNumberOfPages(); page++) {
                 BufferedImage image = pdfRenderer.renderImageWithDPI(page, 300, ImageType.RGB);
                 ImageWrapper imageWrapper = new CachingImageWrapper(databaseDir,
-                        image);
+                        image,
+                        issueHandler);
                 OCRSelectPanel oCRSelectPanel = new DefaultOCRSelectPanel(imageWrapper,
-                        DocumentScannerConf.PREFERRED_SCAN_RESULT_PANEL_WIDTH_DEFAULT);
+                        DocumentScannerConf.PREFERRED_SCAN_RESULT_PANEL_WIDTH_DEFAULT,
+                        issueHandler);
                 oCRSelectPanels.add(oCRSelectPanel);
                 ImageIcon imageIcon = new ImageIcon(image);
                 objectOutputStream.writeObject(imageIcon);
                 imageIcons.add(imageIcon);
-                imageWrappers.add(new CachingImageWrapper(imageStorageDir, image));
+                imageWrappers.add(new CachingImageWrapper(imageStorageDir,
+                        image,
+                        issueHandler));
             }
             document.close();
             data = outputStream.toByteArray();
