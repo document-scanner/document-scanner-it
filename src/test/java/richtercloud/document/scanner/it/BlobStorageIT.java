@@ -37,8 +37,8 @@ import org.slf4j.LoggerFactory;
 import richtercloud.document.scanner.gui.conf.DocumentScannerConf;
 import richtercloud.document.scanner.it.entities.EntityBlob;
 import richtercloud.document.scanner.it.entities.EntityImageWrapper;
-import richtercloud.message.handler.LoggerMessageHandler;
-import richtercloud.message.handler.MessageHandler;
+import richtercloud.message.handler.IssueHandler;
+import richtercloud.message.handler.LoggerIssueHandler;
 import richtercloud.reflection.form.builder.jpa.JPACachedFieldRetriever;
 import richtercloud.reflection.form.builder.jpa.storage.MySQLAutoPersistenceStorage;
 import richtercloud.reflection.form.builder.jpa.storage.MySQLAutoPersistenceStorageConf;
@@ -68,7 +68,7 @@ public class BlobStorageIT {
     public void testBlobStorage() throws IOException, SQLException, StorageConfValidationException, StorageCreationException, InterruptedException, StorageException {
         PersistenceStorage<Long> storage = null;
         try {
-            MessageHandler messageHandler = new LoggerMessageHandler(LOGGER);
+            IssueHandler issueHandler = new LoggerIssueHandler(LOGGER);
             Set<Class<?>> entityClasses = new HashSet<>(Arrays.asList(EntityImageWrapper.class));
             File databaseDir = Files.createTempDirectory("document-scanner-blob-it").toFile();
             FileUtils.forceDelete(databaseDir);
@@ -108,7 +108,7 @@ public class BlobStorageIT {
             storage = new MySQLAutoPersistenceStorage(storageConf,
                     persistenceUnitName,
                     1, //parallelQueryCount
-                    messageHandler,
+                    issueHandler,
                     fieldRetriever
             );
             storage.start();
@@ -143,7 +143,7 @@ public class BlobStorageIT {
             storage = new MySQLAutoPersistenceStorage(storageConf,
                     persistenceUnitName,
                     1, //parallelQueryCount
-                    messageHandler,
+                    issueHandler,
                     fieldRetriever
             );
             storage.start();
