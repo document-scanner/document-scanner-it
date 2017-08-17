@@ -34,15 +34,17 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import richtercloud.document.scanner.gui.Constants;
 import richtercloud.document.scanner.gui.conf.DocumentScannerConf;
 import richtercloud.document.scanner.it.entities.EntityBlob;
 import richtercloud.document.scanner.it.entities.EntityImageWrapper;
 import richtercloud.message.handler.IssueHandler;
 import richtercloud.message.handler.LoggerIssueHandler;
-import richtercloud.reflection.form.builder.jpa.JPACachedFieldRetriever;
+import richtercloud.reflection.form.builder.jpa.retriever.JPAOrderedCachedFieldRetriever;
 import richtercloud.reflection.form.builder.jpa.storage.MySQLAutoPersistenceStorage;
 import richtercloud.reflection.form.builder.jpa.storage.MySQLAutoPersistenceStorageConf;
 import richtercloud.reflection.form.builder.jpa.storage.PersistenceStorage;
+import richtercloud.reflection.form.builder.retriever.FieldOrderValidationException;
 import richtercloud.reflection.form.builder.storage.StorageConfValidationException;
 import richtercloud.reflection.form.builder.storage.StorageCreationException;
 import richtercloud.reflection.form.builder.storage.StorageException;
@@ -65,7 +67,7 @@ public class BlobStorageIT {
         //Mapping: org.eclipse.persistence.mappings.DirectToFieldMapping[data-->ENTITYBLOB.DATA]
         //Descriptor: RelationalDescriptor(richtercloud.document.scanner.it.entities.EntityBlob --> [DatabaseTable(ENTITYBLOB)])
         //```
-    public void testBlobStorage() throws IOException, SQLException, StorageConfValidationException, StorageCreationException, InterruptedException, StorageException {
+    public void testBlobStorage() throws IOException, SQLException, StorageConfValidationException, StorageCreationException, InterruptedException, StorageException, FieldOrderValidationException {
         PersistenceStorage<Long> storage = null;
         try {
             IssueHandler issueHandler = new LoggerIssueHandler(LOGGER);
@@ -102,7 +104,7 @@ public class BlobStorageIT {
             storageConf.setBaseDir(new File(DocumentScannerConf.CONFIG_DIR_DEFAULT,
                     "mysql-5.7.16-linux-glibc2.5-x86_64").getAbsolutePath());
             storageConf.setMyCnfFilePath(myCnfFile.getAbsolutePath());
-            FieldRetriever fieldRetriever = new JPACachedFieldRetriever();
+            FieldRetriever fieldRetriever = new JPAOrderedCachedFieldRetriever(Constants.ENTITY_AND_EMBEDDABLE_CLASSES);
             storage = new MySQLAutoPersistenceStorage(storageConf,
                     persistenceUnitName,
                     1, //parallelQueryCount

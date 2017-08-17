@@ -36,6 +36,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import richtercloud.document.scanner.gui.Constants;
 import richtercloud.document.scanner.model.Company;
 import richtercloud.document.scanner.model.Document;
 import richtercloud.document.scanner.model.FinanceAccount;
@@ -50,9 +51,11 @@ import richtercloud.reflection.form.builder.fieldhandler.FieldUpdateEvent;
 import richtercloud.reflection.form.builder.fieldhandler.MappedFieldUpdateEvent;
 import richtercloud.reflection.form.builder.jpa.idapplier.GeneratedValueIdApplier;
 import richtercloud.reflection.form.builder.jpa.idapplier.IdApplier;
+import richtercloud.reflection.form.builder.jpa.retriever.JPAOrderedCachedFieldRetriever;
 import richtercloud.reflection.form.builder.jpa.storage.DerbyEmbeddedPersistenceStorage;
 import richtercloud.reflection.form.builder.jpa.storage.DerbyEmbeddedPersistenceStorageConf;
 import richtercloud.reflection.form.builder.jpa.storage.PersistenceStorage;
+import richtercloud.reflection.form.builder.retriever.FieldOrderValidationException;
 import richtercloud.reflection.form.builder.storage.StorageConfValidationException;
 import richtercloud.reflection.form.builder.storage.StorageCreationException;
 import richtercloud.reflection.form.builder.storage.StorageException;
@@ -68,7 +71,7 @@ public class DocumentScannerJPAReflectionFormBuilderIT {
     private final static Logger LOGGER = LoggerFactory.getLogger(DocumentScannerJPAReflectionFormBuilderIT.class);
 
     @Test
-    public void testOnFieldUpdate() throws IOException, StorageCreationException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException, StorageConfValidationException, StorageException, SQLException, InvocationTargetException, IdGenerationException {
+    public void testOnFieldUpdate() throws IOException, StorageCreationException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException, StorageConfValidationException, StorageException, SQLException, InvocationTargetException, IdGenerationException, FieldOrderValidationException {
         Set<Class<?>> entityClasses = new HashSet<>(Arrays.asList(Document.class,
                 Payment.class));
         File databaseDir = Files.createTempDirectory(DocumentScannerJPAReflectionFormBuilderIT.class.getSimpleName()).toFile();
@@ -81,7 +84,7 @@ public class DocumentScannerJPAReflectionFormBuilderIT {
         File schemeChecksumFile = File.createTempFile(DocumentScannerJPAReflectionFormBuilderIT.class.getSimpleName(), null);
         DerbyEmbeddedPersistenceStorageConf storageConf = new DerbyEmbeddedPersistenceStorageConf(entityClasses, databaseName, schemeChecksumFile);
         String persistenceUnitName = "document-scanner-it";
-        JPAFieldRetriever fieldRetriever = new JPACachedFieldRetriever();
+        JPAFieldRetriever fieldRetriever = new JPAOrderedCachedFieldRetriever(Constants.ENTITY_AND_EMBEDDABLE_CLASSES);
         PersistenceStorage<Long> storage = new DerbyEmbeddedPersistenceStorage(storageConf,
                 persistenceUnitName,
                 1, //parallelQueryCount

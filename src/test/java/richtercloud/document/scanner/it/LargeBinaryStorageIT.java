@@ -26,6 +26,7 @@ import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import richtercloud.document.scanner.gui.Constants;
 import richtercloud.document.scanner.it.entities.LargeBinaryEntity;
 import richtercloud.jhbuild.java.wrapper.ActionOnMissingBinary;
 import richtercloud.jhbuild.java.wrapper.ArchitectureNotRecognizedException;
@@ -38,11 +39,12 @@ import richtercloud.jhbuild.java.wrapper.OSNotRecognizedException;
 import richtercloud.jhbuild.java.wrapper.download.AutoDownloader;
 import richtercloud.message.handler.IssueHandler;
 import richtercloud.message.handler.LoggerIssueHandler;
-import richtercloud.reflection.form.builder.jpa.JPACachedFieldRetriever;
 import richtercloud.reflection.form.builder.jpa.MemorySequentialIdGenerator;
+import richtercloud.reflection.form.builder.jpa.retriever.JPAOrderedCachedFieldRetriever;
 import richtercloud.reflection.form.builder.jpa.storage.PersistenceStorage;
 import richtercloud.reflection.form.builder.jpa.storage.PostgresqlAutoPersistenceStorage;
 import richtercloud.reflection.form.builder.jpa.storage.PostgresqlAutoPersistenceStorageConf;
+import richtercloud.reflection.form.builder.retriever.FieldOrderValidationException;
 import richtercloud.reflection.form.builder.storage.StorageConfValidationException;
 import richtercloud.reflection.form.builder.storage.StorageCreationException;
 import richtercloud.reflection.form.builder.storage.StorageException;
@@ -58,7 +60,8 @@ public class LargeBinaryStorageIT {
     private final static Logger LOGGER = LoggerFactory.getLogger(LargeBinaryStorageIT.class);
 
     @Test
-    public void testLargeBinaryStorage() throws IOException, StorageConfValidationException,
+    public void testLargeBinaryStorage() throws IOException,
+            StorageConfValidationException,
             StorageCreationException,
             StorageException,
             InterruptedException,
@@ -67,7 +70,8 @@ public class LargeBinaryStorageIT {
             ExtractionException,
             MissingSystemBinary,
             BuildFailureException,
-            ModuleBuildFailureException {
+            ModuleBuildFailureException,
+            FieldOrderValidationException {
         PersistenceStorage<Long> storage = null;
         Locale.setDefault(Locale.ENGLISH);
         try {
@@ -125,7 +129,7 @@ public class LargeBinaryStorageIT {
                     createdb, //createdbBinaryPath
                     pgCtl
             );
-            FieldRetriever fieldRetriever = new JPACachedFieldRetriever();
+            FieldRetriever fieldRetriever = new JPAOrderedCachedFieldRetriever(Constants.ENTITY_AND_EMBEDDABLE_CLASSES);
             storage = new PostgresqlAutoPersistenceStorage(storageConf,
                     persistenceUnitName,
                     1, //parallelQueryCount

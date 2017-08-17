@@ -83,6 +83,9 @@
                             <argLine>-Xmx12g</argLine>
                                 <!-- Xmx8g is too small for
                                         LargeBinaryStorageIT -->
+                            <forkedProcessTimeoutInSeconds>0</forkedProcessTimeoutInSeconds>
+                                <!-- avoids `There was a timeout or other error
+                                        in the fork` -->
                         </configuration>
                     </execution>
                 </executions>

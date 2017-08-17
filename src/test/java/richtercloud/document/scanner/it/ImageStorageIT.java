@@ -41,6 +41,7 @@ import org.apache.pdfbox.rendering.PDFRenderer;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import richtercloud.document.scanner.gui.Constants;
 import richtercloud.document.scanner.gui.DefaultOCRSelectPanel;
 import richtercloud.document.scanner.gui.conf.DocumentScannerConf;
 import richtercloud.document.scanner.ifaces.ImageWrapper;
@@ -60,13 +61,14 @@ import richtercloud.jhbuild.java.wrapper.OSNotRecognizedException;
 import richtercloud.jhbuild.java.wrapper.download.AutoDownloader;
 import richtercloud.message.handler.IssueHandler;
 import richtercloud.message.handler.LoggerIssueHandler;
-import richtercloud.reflection.form.builder.jpa.JPACachedFieldRetriever;
 import richtercloud.reflection.form.builder.jpa.MemorySequentialIdGenerator;
+import richtercloud.reflection.form.builder.jpa.retriever.JPAOrderedCachedFieldRetriever;
 import richtercloud.reflection.form.builder.jpa.storage.DerbyEmbeddedPersistenceStorage;
 import richtercloud.reflection.form.builder.jpa.storage.DerbyEmbeddedPersistenceStorageConf;
 import richtercloud.reflection.form.builder.jpa.storage.PersistenceStorage;
 import richtercloud.reflection.form.builder.jpa.storage.PostgresqlAutoPersistenceStorage;
 import richtercloud.reflection.form.builder.jpa.storage.PostgresqlAutoPersistenceStorageConf;
+import richtercloud.reflection.form.builder.retriever.FieldOrderValidationException;
 import richtercloud.reflection.form.builder.storage.StorageConfValidationException;
 import richtercloud.reflection.form.builder.storage.StorageCreationException;
 import richtercloud.reflection.form.builder.storage.StorageException;
@@ -91,7 +93,8 @@ public class ImageStorageIT {
             ExtractionException,
             MissingSystemBinary,
             BuildFailureException,
-            ModuleBuildFailureException {
+            ModuleBuildFailureException,
+            FieldOrderValidationException {
         try {
             new JFXPanel();
                 //- necessary in order to avoid
@@ -122,7 +125,7 @@ public class ImageStorageIT {
                     databaseDir.getAbsolutePath(),
                     schemeChecksumFile);
             String persistenceUnitName = "document-scanner-it";
-            FieldRetriever fieldRetriever = new JPACachedFieldRetriever();
+            FieldRetriever fieldRetriever = new JPAOrderedCachedFieldRetriever(Constants.ENTITY_AND_EMBEDDABLE_CLASSES);
             final PersistenceStorage<Long> derbyEmbeddedStorage1 = new DerbyEmbeddedPersistenceStorage(storageConf,
                     persistenceUnitName,
                     1, //parallelQueryCount
