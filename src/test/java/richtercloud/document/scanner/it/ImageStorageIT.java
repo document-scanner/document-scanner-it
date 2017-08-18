@@ -49,6 +49,15 @@ import richtercloud.document.scanner.it.entities.EntityByteArray;
 import richtercloud.document.scanner.it.entities.EntityImageIcon;
 import richtercloud.document.scanner.it.entities.EntityImageWrapper;
 import richtercloud.document.scanner.model.imagewrapper.CachingImageWrapper;
+import richtercloud.jhbuild.java.wrapper.ActionOnMissingBinary;
+import richtercloud.jhbuild.java.wrapper.ArchitectureNotRecognizedException;
+import richtercloud.jhbuild.java.wrapper.BuildFailureException;
+import richtercloud.jhbuild.java.wrapper.ExtractionException;
+import richtercloud.jhbuild.java.wrapper.JHBuildJavaWrapper;
+import richtercloud.jhbuild.java.wrapper.MissingSystemBinary;
+import richtercloud.jhbuild.java.wrapper.ModuleBuildFailureException;
+import richtercloud.jhbuild.java.wrapper.OSNotRecognizedException;
+import richtercloud.jhbuild.java.wrapper.download.AutoDownloader;
 import richtercloud.message.handler.IssueHandler;
 import richtercloud.message.handler.LoggerIssueHandler;
 import richtercloud.reflection.form.builder.jpa.JPACachedFieldRetriever;
@@ -71,7 +80,18 @@ public class ImageStorageIT {
     private final static Logger LOGGER = LoggerFactory.getLogger(ImageStorageIT.class);
 
     @Test
-    public void testImageStorage() throws IOException, StorageException, SQLException, InterruptedException, StorageConfValidationException, StorageCreationException {
+    public void testImageStorage() throws IOException,
+            StorageException,
+            SQLException,
+            InterruptedException,
+            StorageConfValidationException,
+            StorageCreationException,
+            OSNotRecognizedException,
+            ArchitectureNotRecognizedException,
+            ExtractionException,
+            MissingSystemBinary,
+            BuildFailureException,
+            ModuleBuildFailureException {
         try {
             new JFXPanel();
                 //- necessary in order to avoid
@@ -233,9 +253,36 @@ public class ImageStorageIT {
                 //an inexisting database directory triggers creation of database
                 //with initdb
             LOGGER.debug(String.format("PostgreSQL database directory is %s", databaseDirPostgresql.getAbsolutePath()));
-            String initdb = "/usr/lib/postgresql/9.6/bin/initdb";
-            String postgres = "/usr/lib/postgresql/9.6/bin/postgres";
-            String createdb = "createdb";
+            //build PostgreSQL
+            File postgresqlInstallationPrefixDir = Files.createTempDirectory(ImageStorageIT.class.getSimpleName()).toFile();
+            LOGGER.debug(String.format("using '%s' as PostgreSQL installation prefix",
+                    postgresqlInstallationPrefixDir.getAbsolutePath()));
+            File downloadDir = Files.createTempDirectory(ImageStorageIT.class.getSimpleName()).toFile();
+                //SystemUtils.getUserHome() causes trouble
+                //($HOME/jhbuild/checkout might be jhbuilds default extraction
+                //directory)
+            LOGGER.debug(String.format("using '%s' as JHBuild Java wrapper download directory",
+                    downloadDir));
+            JHBuildJavaWrapper jHBuildJavaWrapper = new JHBuildJavaWrapper(postgresqlInstallationPrefixDir, //installationPrefixDir
+                    downloadDir, //downloadDir
+                    ActionOnMissingBinary.DOWNLOAD,
+                    ActionOnMissingBinary.DOWNLOAD,
+                    new AutoDownloader(), //downloader
+                    false,
+                    true, //silenceStdout
+                    true, //silenceStderr
+                    issueHandler);
+            String moduleName = "postgresql-9.6.3";
+            LOGGER.info(String.format("building module %s from JHBuild Java wrapper's default moduleset",
+                    moduleName));
+            jHBuildJavaWrapper.installModuleset(moduleName);
+                //moduleset shipped with jhbuild-java-wrapper
+            String initdb = new File(postgresqlInstallationPrefixDir,
+                    String.join(File.separator, "bin", "initdb")).getAbsolutePath();
+            String postgres = new File(postgresqlInstallationPrefixDir,
+                    String.join(File.separator, "bin", "postgres")).getAbsolutePath();
+            String createdb = new File(postgresqlInstallationPrefixDir,
+                    String.join(File.separator, "bin", "createdb")).getAbsolutePath();
             String databaseName = "image-storage-it";
             String username = "docu";
             String password = "docu";

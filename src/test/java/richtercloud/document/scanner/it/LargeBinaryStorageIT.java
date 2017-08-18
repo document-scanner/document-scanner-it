@@ -23,11 +23,19 @@ import java.util.Locale;
 import java.util.Random;
 import java.util.Set;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import richtercloud.document.scanner.it.entities.LargeBinaryEntity;
+import richtercloud.jhbuild.java.wrapper.ActionOnMissingBinary;
+import richtercloud.jhbuild.java.wrapper.ArchitectureNotRecognizedException;
+import richtercloud.jhbuild.java.wrapper.BuildFailureException;
+import richtercloud.jhbuild.java.wrapper.ExtractionException;
+import richtercloud.jhbuild.java.wrapper.JHBuildJavaWrapper;
+import richtercloud.jhbuild.java.wrapper.MissingSystemBinary;
+import richtercloud.jhbuild.java.wrapper.ModuleBuildFailureException;
+import richtercloud.jhbuild.java.wrapper.OSNotRecognizedException;
+import richtercloud.jhbuild.java.wrapper.download.AutoDownloader;
 import richtercloud.message.handler.IssueHandler;
 import richtercloud.message.handler.LoggerIssueHandler;
 import richtercloud.reflection.form.builder.jpa.JPACachedFieldRetriever;
@@ -50,7 +58,16 @@ public class LargeBinaryStorageIT {
     private final static Logger LOGGER = LoggerFactory.getLogger(LargeBinaryStorageIT.class);
 
     @Test
-    public void testLargeBinaryStorage() throws IOException, StorageConfValidationException, StorageCreationException, StorageException, InterruptedException {
+    public void testLargeBinaryStorage() throws IOException, StorageConfValidationException,
+            StorageCreationException,
+            StorageException,
+            InterruptedException,
+            OSNotRecognizedException,
+            ArchitectureNotRecognizedException,
+            ExtractionException,
+            MissingSystemBinary,
+            BuildFailureException,
+            ModuleBuildFailureException {
         PersistenceStorage<Long> storage = null;
         Locale.setDefault(Locale.ENGLISH);
         try {
@@ -63,11 +80,37 @@ public class LargeBinaryStorageIT {
             String username = "document-scanner";
             String password = "document-scanner";
             String databaseName = "document-scanner";
-            Pair<String, String> bestPostgresqlBaseDir = PostgresqlAutoPersistenceStorageConf.findBestInitialPostgresqlBasePath();
-                //@TODO: add discovery for other OS and allow specification as system property
-            if(bestPostgresqlBaseDir == null) {
-                throw new IllegalArgumentException("no PostgreSQL initdb binary could be found (currently only Debian-based systems with PostgreSQL binaries in /usr/lib/postgresql/[version] are supported.");
-            }
+            //build PostgreSQL
+            File postgresqlInstallationPrefixDir = Files.createTempDirectory(LargeBinaryStorageIT.class.getSimpleName()).toFile();
+            LOGGER.debug(String.format("using '%s' as PostgreSQL installation prefix",
+                    postgresqlInstallationPrefixDir.getAbsolutePath()));
+            File downloadDir = Files.createTempDirectory(LargeBinaryStorageIT.class.getSimpleName()).toFile();
+                //SystemUtils.getUserHome() causes trouble
+                //($HOME/jhbuild/checkout might be jhbuilds default extraction
+                //directory)
+            LOGGER.debug(String.format("using '%s' as JHBuild Java wrapper download directory",
+                    downloadDir));
+            IssueHandler issueHandler = new LoggerIssueHandler(LOGGER);
+            JHBuildJavaWrapper jHBuildJavaWrapper = new JHBuildJavaWrapper(postgresqlInstallationPrefixDir, //installationPrefixDir
+                    downloadDir, //downloadDir
+                    ActionOnMissingBinary.DOWNLOAD,
+                    ActionOnMissingBinary.DOWNLOAD,
+                    new AutoDownloader(), //downloader
+                    false,
+                    true, //silenceStdout
+                    true, //silenceStderr
+                    issueHandler);
+            String moduleName = "postgresql-9.6.3";
+            LOGGER.info(String.format("building module %s from JHBuild Java wrapper's default moduleset",
+                    moduleName));
+            jHBuildJavaWrapper.installModuleset(moduleName);
+                //moduleset shipped with jhbuild-java-wrapper
+            String initdb = new File(postgresqlInstallationPrefixDir,
+                    String.join(File.separator, "bin", "initdb")).getAbsolutePath();
+            String postgres = new File(postgresqlInstallationPrefixDir,
+                    String.join(File.separator, "bin", "postgres")).getAbsolutePath();
+            String createdb = new File(postgresqlInstallationPrefixDir,
+                    String.join(File.separator, "bin", "createdb")).getAbsolutePath();
             PostgresqlAutoPersistenceStorageConf storageConf = new PostgresqlAutoPersistenceStorageConf(entityClasses,
                     "localhost", //hostname
                     username,
@@ -75,12 +118,11 @@ public class LargeBinaryStorageIT {
                     databaseName,
                     schemeChecksumFile,
                     databaseDir.getAbsolutePath(),
-                    bestPostgresqlBaseDir.getKey(),
-                    bestPostgresqlBaseDir.getValue(),
-                    "createdb" //createdbBinaryPath
+                    initdb, //initdbBinaryPath
+                    postgres, //postgresBinaryPath
+                    createdb //createdbBinaryPath
             );
             FieldRetriever fieldRetriever = new JPACachedFieldRetriever();
-            IssueHandler issueHandler = new LoggerIssueHandler(LOGGER);
             storage = new PostgresqlAutoPersistenceStorage(storageConf,
                     persistenceUnitName,
                     1, //parallelQueryCount
@@ -93,9 +135,11 @@ public class LargeBinaryStorageIT {
             Random random = new Random(randomSeed);
             int entityCount = 20;
             for(int i=0; i<entityCount; i++) {
-                int mbSize = random.nextInt(128); //128 MB max.
-                    //256 MB cause trouble on Travis CI and it's not worth
-                    //figuring this out
+                int mbSize = random.nextInt(64); //64 MB max.
+                    //128 MB cause trouble on Travis CI (crash because of
+                    //limited `vm.max_map_count` which causes
+                    //`Native memory allocation (mmap) failed to map 109576192 bytes for committing reserved memory.`
+                    //) and it's not worth figuring this out for now
                 int byteCount = 1024*1024*mbSize;
                 LOGGER.debug(String.format("generating %d MB random bytes", mbSize));
                 byte[] largeRandomBytes = new byte[byteCount];
