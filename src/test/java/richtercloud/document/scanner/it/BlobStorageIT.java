@@ -97,12 +97,10 @@ public class BlobStorageIT {
                     "localhost", //hostname
                     username,
                     databaseName,
+                    databaseDir.getAbsolutePath(),
                     schemeChecksumFile);
             storageConf.setBaseDir(new File(DocumentScannerConf.CONFIG_DIR_DEFAULT,
                     "mysql-5.7.16-linux-glibc2.5-x86_64").getAbsolutePath());
-            storageConf.setDatabaseDir(databaseDir.getAbsolutePath());
-            storageConf.setPassword(password);
-            storageConf.setDatabaseName(databaseName);
             storageConf.setMyCnfFilePath(myCnfFile.getAbsolutePath());
             FieldRetriever fieldRetriever = new JPACachedFieldRetriever();
             storage = new MySQLAutoPersistenceStorage(storageConf,

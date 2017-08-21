@@ -111,6 +111,8 @@ public class LargeBinaryStorageIT {
                     String.join(File.separator, "bin", "postgres")).getAbsolutePath();
             String createdb = new File(postgresqlInstallationPrefixDir,
                     String.join(File.separator, "bin", "createdb")).getAbsolutePath();
+            String pgCtl = new File(postgresqlInstallationPrefixDir,
+                    String.join(File.separator, "bin", "pg_ctl")).getAbsolutePath();
             PostgresqlAutoPersistenceStorageConf storageConf = new PostgresqlAutoPersistenceStorageConf(entityClasses,
                     "localhost", //hostname
                     username,
@@ -120,7 +122,8 @@ public class LargeBinaryStorageIT {
                     databaseDir.getAbsolutePath(),
                     initdb, //initdbBinaryPath
                     postgres, //postgresBinaryPath
-                    createdb //createdbBinaryPath
+                    createdb, //createdbBinaryPath
+                    pgCtl
             );
             FieldRetriever fieldRetriever = new JPACachedFieldRetriever();
             storage = new PostgresqlAutoPersistenceStorage(storageConf,

@@ -283,6 +283,8 @@ public class ImageStorageIT {
                     String.join(File.separator, "bin", "postgres")).getAbsolutePath();
             String createdb = new File(postgresqlInstallationPrefixDir,
                     String.join(File.separator, "bin", "createdb")).getAbsolutePath();
+            String pgCtl = new File(postgresqlInstallationPrefixDir,
+                    String.join(File.separator, "bin", "pg_ctl")).getAbsolutePath();
             String databaseName = "image-storage-it";
             String username = "docu";
             String password = "docu";
@@ -295,7 +297,8 @@ public class ImageStorageIT {
                     databaseDirPostgresql.getAbsolutePath(), //databaseDir
                     initdb,
                     postgres,
-                    createdb);
+                    createdb,
+                    pgCtl);
             PersistenceStorage<Long> postgresqlStorage = new PostgresqlAutoPersistenceStorage(postgresqlPersistenceStorageConf,
                     persistenceUnitName,
                     1, //parallelQueryCount
