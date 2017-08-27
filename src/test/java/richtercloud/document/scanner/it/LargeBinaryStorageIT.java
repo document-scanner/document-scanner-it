@@ -129,7 +129,7 @@ public class LargeBinaryStorageIT {
                     createdb, //createdbBinaryPath
                     pgCtl
             );
-            FieldRetriever fieldRetriever = new JPAOrderedCachedFieldRetriever(Constants.ENTITY_AND_EMBEDDABLE_CLASSES);
+            FieldRetriever fieldRetriever = new JPAOrderedCachedFieldRetriever(Constants.QUERYABLE_AND_EMBEDDABLE_CLASSES);
             storage = new PostgresqlAutoPersistenceStorage(storageConf,
                     persistenceUnitName,
                     1, //parallelQueryCount

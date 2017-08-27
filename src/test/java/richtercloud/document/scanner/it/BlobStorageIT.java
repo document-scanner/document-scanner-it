@@ -104,7 +104,7 @@ public class BlobStorageIT {
             storageConf.setBaseDir(new File(DocumentScannerConf.CONFIG_DIR_DEFAULT,
                     "mysql-5.7.16-linux-glibc2.5-x86_64").getAbsolutePath());
             storageConf.setMyCnfFilePath(myCnfFile.getAbsolutePath());
-            FieldRetriever fieldRetriever = new JPAOrderedCachedFieldRetriever(Constants.ENTITY_AND_EMBEDDABLE_CLASSES);
+            FieldRetriever fieldRetriever = new JPAOrderedCachedFieldRetriever(Constants.QUERYABLE_AND_EMBEDDABLE_CLASSES);
             storage = new MySQLAutoPersistenceStorage(storageConf,
                     persistenceUnitName,
                     1, //parallelQueryCount

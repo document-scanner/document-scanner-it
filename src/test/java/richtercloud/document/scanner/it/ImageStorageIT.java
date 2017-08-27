@@ -125,7 +125,7 @@ public class ImageStorageIT {
                     databaseDir.getAbsolutePath(),
                     schemeChecksumFile);
             String persistenceUnitName = "document-scanner-it";
-            FieldRetriever fieldRetriever = new JPAOrderedCachedFieldRetriever(Constants.ENTITY_AND_EMBEDDABLE_CLASSES);
+            FieldRetriever fieldRetriever = new JPAOrderedCachedFieldRetriever(Constants.QUERYABLE_AND_EMBEDDABLE_CLASSES);
             final PersistenceStorage<Long> derbyEmbeddedStorage1 = new DerbyEmbeddedPersistenceStorage(storageConf,
                     persistenceUnitName,
                     1, //parallelQueryCount

@@ -84,7 +84,7 @@ public class DocumentScannerJPAReflectionFormBuilderIT {
         File schemeChecksumFile = File.createTempFile(DocumentScannerJPAReflectionFormBuilderIT.class.getSimpleName(), null);
         DerbyEmbeddedPersistenceStorageConf storageConf = new DerbyEmbeddedPersistenceStorageConf(entityClasses, databaseName, schemeChecksumFile);
         String persistenceUnitName = "document-scanner-it";
-        JPAFieldRetriever fieldRetriever = new JPAOrderedCachedFieldRetriever(Constants.ENTITY_AND_EMBEDDABLE_CLASSES);
+        JPAFieldRetriever fieldRetriever = new JPAOrderedCachedFieldRetriever(Constants.QUERYABLE_AND_EMBEDDABLE_CLASSES);
         PersistenceStorage<Long> storage = new DerbyEmbeddedPersistenceStorage(storageConf,
                 persistenceUnitName,
                 1, //parallelQueryCount
