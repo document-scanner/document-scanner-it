@@ -45,6 +45,7 @@ import richtercloud.document.scanner.gui.Constants;
 import richtercloud.document.scanner.gui.DefaultOCRSelectPanel;
 import richtercloud.document.scanner.gui.conf.DocumentScannerConf;
 import richtercloud.document.scanner.ifaces.ImageWrapper;
+import richtercloud.document.scanner.ifaces.ImageWrapperException;
 import richtercloud.document.scanner.ifaces.OCRSelectPanel;
 import richtercloud.document.scanner.it.entities.EntityByteArray;
 import richtercloud.document.scanner.it.entities.EntityImageIcon;
@@ -94,7 +95,8 @@ public class ImageStorageIT {
             MissingSystemBinary,
             BuildFailureException,
             ModuleBuildFailureException,
-            FieldOrderValidationException {
+            FieldOrderValidationException,
+            ImageWrapperException {
         try {
             new JFXPanel();
                 //- necessary in order to avoid
