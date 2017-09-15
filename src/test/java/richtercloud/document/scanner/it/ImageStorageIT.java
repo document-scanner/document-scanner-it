@@ -97,6 +97,7 @@ public class ImageStorageIT {
             ModuleBuildFailureException,
             FieldOrderValidationException,
             ImageWrapperException {
+        LOGGER.info("testImageStorage");
         try {
             new JFXPanel();
                 //- necessary in order to avoid

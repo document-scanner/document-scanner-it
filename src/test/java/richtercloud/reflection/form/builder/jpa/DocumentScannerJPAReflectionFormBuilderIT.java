@@ -71,7 +71,18 @@ public class DocumentScannerJPAReflectionFormBuilderIT {
     private final static Logger LOGGER = LoggerFactory.getLogger(DocumentScannerJPAReflectionFormBuilderIT.class);
 
     @Test
-    public void testOnFieldUpdate() throws IOException, StorageCreationException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException, StorageConfValidationException, StorageException, SQLException, InvocationTargetException, IdGenerationException, FieldOrderValidationException {
+    public void testOnFieldUpdate() throws IOException,
+            StorageCreationException,
+            NoSuchFieldException,
+            IllegalArgumentException,
+            IllegalAccessException,
+            StorageConfValidationException,
+            StorageException,
+            SQLException,
+            InvocationTargetException,
+            IdGenerationException,
+            FieldOrderValidationException {
+        LOGGER.info("testOnFieldUpdate");
         Set<Class<?>> entityClasses = new HashSet<>(Arrays.asList(Document.class,
                 Payment.class));
         File databaseDir = Files.createTempDirectory(DocumentScannerJPAReflectionFormBuilderIT.class.getSimpleName()).toFile();

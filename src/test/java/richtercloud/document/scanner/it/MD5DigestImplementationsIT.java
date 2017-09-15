@@ -38,14 +38,15 @@ public class MD5DigestImplementationsIT {
 
     @Test
     public void testMD5DigestImplementation() throws IOException {
+        LOGGER.info("testMD5DigestImplementation");
         //copy classpath resource into file first in order to make certain
         //slow processes visible when reading from file
         File resourceFile = Files.createTempFile(MD5DigestImplementationsIT.class.getSimpleName(), //prefix
                 null //suffix
         ).toFile();
-        int mbCount = 500;
-            //1000MB cause trouble on Travis CI and it's not worth figuring this
-            //out
+        int mbCount = 250;
+            //500MB cause JVM crash in native memory allocation on Travis CI and
+            //it's not worth figuring this out
         int byteCount = 1024*1024*mbCount;
         LOGGER.debug(String.format("generating a %d MB random string for the checksum test",
                 mbCount));

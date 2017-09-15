@@ -68,6 +68,7 @@ public class BlobStorageIT {
         //Descriptor: RelationalDescriptor(richtercloud.document.scanner.it.entities.EntityBlob --> [DatabaseTable(ENTITYBLOB)])
         //```
     public void testBlobStorage() throws IOException, SQLException, StorageConfValidationException, StorageCreationException, InterruptedException, StorageException, FieldOrderValidationException {
+        LOGGER.info("testBlobStorage");
         PersistenceStorage<Long> storage = null;
         try {
             IssueHandler issueHandler = new LoggerIssueHandler(LOGGER);

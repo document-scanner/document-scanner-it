@@ -79,7 +79,10 @@
                             <goal>verify</goal>
                         </goals>
                         <configuration>
-                            <forkMode>always</forkMode>
+                            <forkCount>1</forkCount>
+                                <!-- only fork for differernt argLine (more than
+                                        one fork can easily cause navtive memory
+                                        error -->
                             <argLine>-Xmx12g</argLine>
                                 <!-- Xmx8g is too small for
                                         LargeBinaryStorageIT -->

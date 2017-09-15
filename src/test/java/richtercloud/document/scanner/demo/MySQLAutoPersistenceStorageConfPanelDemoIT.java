@@ -32,6 +32,7 @@ public class MySQLAutoPersistenceStorageConfPanelDemoIT {
      */
     @Test
     public void testTestMySQLDownload() throws Exception {
+        LOGGER.info("testTestMySQLDownload");
         try {
             new MySQLAutoPersistenceStorageConfPanelDemo();
         }catch(HeadlessException ex) {

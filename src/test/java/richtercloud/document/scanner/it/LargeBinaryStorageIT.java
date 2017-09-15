@@ -72,6 +72,7 @@ public class LargeBinaryStorageIT {
             BuildFailureException,
             ModuleBuildFailureException,
             FieldOrderValidationException {
+        LOGGER.info("testLargeBinaryStorage");
         PersistenceStorage<Long> storage = null;
         Locale.setDefault(Locale.ENGLISH);
         try {
