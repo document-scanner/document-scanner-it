@@ -12,7 +12,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package richtercloud.document.scanner.it;
+package de.richtercloud.document.scanner.it;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
@@ -31,6 +31,10 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import java.util.logging.Level;
+
+import de.richtercloud.document.scanner.it.entities.EntityByteArray;
+import de.richtercloud.document.scanner.it.entities.EntityImageIcon;
+import de.richtercloud.document.scanner.it.entities.EntityImageWrapper;
 import javafx.embed.swing.JFXPanel;
 import javax.cache.Caching;
 import javax.swing.ImageIcon;
@@ -41,16 +45,13 @@ import org.apache.pdfbox.rendering.PDFRenderer;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import richtercloud.document.scanner.gui.Constants;
-import richtercloud.document.scanner.gui.DefaultOCRSelectPanel;
-import richtercloud.document.scanner.gui.conf.DocumentScannerConf;
-import richtercloud.document.scanner.ifaces.ImageWrapper;
-import richtercloud.document.scanner.ifaces.ImageWrapperException;
-import richtercloud.document.scanner.ifaces.OCRSelectPanel;
-import richtercloud.document.scanner.it.entities.EntityByteArray;
-import richtercloud.document.scanner.it.entities.EntityImageIcon;
-import richtercloud.document.scanner.it.entities.EntityImageWrapper;
-import richtercloud.document.scanner.model.imagewrapper.CachingImageWrapper;
+import de.richtercloud.document.scanner.gui.Constants;
+import de.richtercloud.document.scanner.gui.DefaultOCRSelectPanel;
+import de.richtercloud.document.scanner.gui.conf.DocumentScannerConf;
+import de.richtercloud.document.scanner.ifaces.ImageWrapper;
+import de.richtercloud.document.scanner.ifaces.ImageWrapperException;
+import de.richtercloud.document.scanner.ifaces.OCRSelectPanel;
+import de.richtercloud.document.scanner.model.imagewrapper.CachingImageWrapper;
 import richtercloud.jhbuild.java.wrapper.ActionOnMissingBinary;
 import richtercloud.jhbuild.java.wrapper.ArchitectureNotRecognizedException;
 import richtercloud.jhbuild.java.wrapper.BuildFailureException;

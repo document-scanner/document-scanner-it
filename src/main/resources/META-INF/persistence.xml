@@ -3,31 +3,31 @@
   <persistence-unit name="document-scanner-it" transaction-type="RESOURCE_LOCAL">
     <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
     <!--<provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>-->
-    <class>richtercloud.document.scanner.it.entities.EntityBlob</class>
-    <class>richtercloud.document.scanner.it.entities.EntityByteArray</class>
-    <class>richtercloud.document.scanner.it.entities.EntityImageIcon</class>
-    <class>richtercloud.document.scanner.it.entities.EntityImageWrapper</class>
-    <class>richtercloud.document.scanner.model.Document</class>
-    <class>richtercloud.document.scanner.model.Payment</class>
-    <class>richtercloud.document.scanner.model.Location</class>
-    <class>richtercloud.document.scanner.model.FinanceAccount</class>
-    <class>richtercloud.document.scanner.model.Company</class>
-    <class>richtercloud.document.scanner.model.EmailAddress</class>
-    <class>richtercloud.document.scanner.it.entities.LargeBinaryEntity</class>
-    <class>richtercloud.document.scanner.model.APackage</class>
-    <class>richtercloud.document.scanner.model.Bill</class>
-    <class>richtercloud.document.scanner.model.Email</class>
-    <class>richtercloud.document.scanner.model.Employment</class>
-    <class>richtercloud.document.scanner.model.Leaflet</class>
-    <class>richtercloud.document.scanner.model.Person</class>
-    <class>richtercloud.document.scanner.model.Shipping</class>
-    <class>richtercloud.document.scanner.model.TelephoneCall</class>
-    <class>richtercloud.document.scanner.model.TelephoneNumber</class>
-    <class>richtercloud.document.scanner.model.Transport</class>
-    <class>richtercloud.document.scanner.model.TransportTicket</class>
-    <class>richtercloud.document.scanner.model.Withdrawal</class>
-    <class>richtercloud.document.scanner.model.Workflow</class>
-    <class>richtercloud.document.scanner.model.WorkflowItem</class>
+    <class>EntityBlob</class>
+    <class>EntityByteArray</class>
+    <class>EntityImageIcon</class>
+    <class>EntityImageWrapper</class>
+    <class>de.richtercloud.document.scanner.model.Document</class>
+    <class>de.richtercloud.document.scanner.model.Payment</class>
+    <class>de.richtercloud.document.scanner.model.Location</class>
+    <class>de.richtercloud.document.scanner.model.FinanceAccount</class>
+    <class>de.richtercloud.document.scanner.model.Company</class>
+    <class>de.richtercloud.document.scanner.model.EmailAddress</class>
+    <class>LargeBinaryEntity</class>
+    <class>de.richtercloud.document.scanner.model.APackage</class>
+    <class>de.richtercloud.document.scanner.model.Bill</class>
+    <class>de.richtercloud.document.scanner.model.Email</class>
+    <class>de.richtercloud.document.scanner.model.Employment</class>
+    <class>de.richtercloud.document.scanner.model.Leaflet</class>
+    <class>de.richtercloud.document.scanner.model.Person</class>
+    <class>de.richtercloud.document.scanner.model.Shipping</class>
+    <class>de.richtercloud.document.scanner.model.TelephoneCall</class>
+    <class>de.richtercloud.document.scanner.model.TelephoneNumber</class>
+    <class>de.richtercloud.document.scanner.model.Transport</class>
+    <class>de.richtercloud.document.scanner.model.TransportTicket</class>
+    <class>de.richtercloud.document.scanner.model.Withdrawal</class>
+    <class>de.richtercloud.document.scanner.model.Workflow</class>
+    <class>de.richtercloud.document.scanner.model.WorkflowItem</class>
     <properties>
       <property name="javax.persistence.schema-generation.database.action" value="create"/>
       <!--<property name="hibernate.hbm2ddl.auto" value="update"/>-->

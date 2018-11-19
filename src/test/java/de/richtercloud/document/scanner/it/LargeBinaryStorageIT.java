@@ -12,7 +12,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package richtercloud.document.scanner.it;
+package de.richtercloud.document.scanner.it;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,12 +22,13 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Random;
 import java.util.Set;
+
+import de.richtercloud.document.scanner.it.entities.LargeBinaryEntity;
 import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import richtercloud.document.scanner.gui.Constants;
-import richtercloud.document.scanner.it.entities.LargeBinaryEntity;
+import de.richtercloud.document.scanner.gui.Constants;
 import richtercloud.jhbuild.java.wrapper.ActionOnMissingBinary;
 import richtercloud.jhbuild.java.wrapper.ArchitectureNotRecognizedException;
 import richtercloud.jhbuild.java.wrapper.BuildFailureException;

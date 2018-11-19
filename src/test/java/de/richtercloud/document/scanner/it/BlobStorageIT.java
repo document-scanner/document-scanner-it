@@ -12,7 +12,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package richtercloud.document.scanner.it;
+package de.richtercloud.document.scanner.it;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -28,16 +28,17 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import javax.persistence.EntityManager;
+
+import de.richtercloud.document.scanner.it.entities.EntityBlob;
+import de.richtercloud.document.scanner.it.entities.EntityImageWrapper;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import richtercloud.document.scanner.gui.Constants;
-import richtercloud.document.scanner.gui.conf.DocumentScannerConf;
-import richtercloud.document.scanner.it.entities.EntityBlob;
-import richtercloud.document.scanner.it.entities.EntityImageWrapper;
+import de.richtercloud.document.scanner.gui.Constants;
+import de.richtercloud.document.scanner.gui.conf.DocumentScannerConf;
 import richtercloud.message.handler.IssueHandler;
 import richtercloud.message.handler.LoggerIssueHandler;
 import richtercloud.reflection.form.builder.jpa.retriever.JPAOrderedCachedFieldRetriever;
@@ -63,9 +64,9 @@ public class BlobStorageIT {
         //```
         //[EL Warning]: 2017-07-31 00:11:40.03--UnitOfWork(178575564)--Exception [EclipseLink-32] (Eclipse Persistence Services - 2.6.4.v20160829-44060b6): org.eclipse.persistence.exceptions.DescriptorException
         //Exception Description: Trying to set value [[B@44550792] for instance variable [data] of type [java.sql.Blob] in the object.  The specified object is not an instance of the class or interface declaring the underlying field, or an unwrapping conversion has failed.
-        //Internal Exception: java.lang.IllegalArgumentException: Can not set java.sql.Blob field richtercloud.document.scanner.it.entities.EntityBlob.data to [B
+        //Internal Exception: java.lang.IllegalArgumentException: Can not set java.sql.Blob field EntityBlob.data to [B
         //Mapping: org.eclipse.persistence.mappings.DirectToFieldMapping[data-->ENTITYBLOB.DATA]
-        //Descriptor: RelationalDescriptor(richtercloud.document.scanner.it.entities.EntityBlob --> [DatabaseTable(ENTITYBLOB)])
+        //Descriptor: RelationalDescriptor(EntityBlob --> [DatabaseTable(ENTITYBLOB)])
         //```
     public void testBlobStorage() throws IOException, SQLException, StorageConfValidationException, StorageCreationException, InterruptedException, StorageException, FieldOrderValidationException {
         LOGGER.info("testBlobStorage");

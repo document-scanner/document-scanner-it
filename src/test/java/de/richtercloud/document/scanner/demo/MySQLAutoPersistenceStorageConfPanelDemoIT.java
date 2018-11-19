@@ -12,13 +12,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package richtercloud.document.scanner.demo;
+package de.richtercloud.document.scanner.demo;
 
 import java.awt.HeadlessException;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import richtercloud.document.scanner.gui.storageconf.MySQLAutoPersistenceStorageConfPanelDemo;
+import de.richtercloud.document.scanner.gui.storageconf.MySQLAutoPersistenceStorageConfPanelDemo;
 
 /**
  *

@@ -12,51 +12,56 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package richtercloud.document.scanner.it.entities;
+package de.richtercloud.document.scanner.it.entities;
 
 import java.io.Serializable;
-import java.util.List;
+import javax.persistence.Basic;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Lob;
-import javax.swing.ImageIcon;
 
 /**
  *
  * @author richter
  */
 @Entity
-public class EntityImageIcon implements Serializable {
+public class LargeBinaryEntity implements Serializable {
     private static final long serialVersionUID = 1L;
-
     @Id
     @GeneratedValue
     private Long id;
     @Lob
-    private List<ImageIcon> data;
+    //@Fetch(FetchMode.SELECT) //doesn't help in conjunction with @Lob and
+    //@Basic(fetch = FetchType.LAZY)
+    //@LazyGroup(value = "binaryGroup") specifying @LazyGroup doesn't fix
+    //`Exception in thread "main" java.lang.ClassCastException: org.hibernate.bytecode.enhance.spi.LazyPropertyInitializer$1 cannot be cast to [B`
+    //<ref>https://forum.hibernate.org/viewtopic.php?f=1&t=1043618&start=0</ref>
+    //in 5.2.4.Final and 5.1.3.Final -> use 5.0.11.Final
+    @Basic(fetch = FetchType.LAZY)
+    private byte[] binaryData;
 
-    protected EntityImageIcon() {
+    protected LargeBinaryEntity() {
     }
 
-    public EntityImageIcon(Long id, List<ImageIcon> data) {
-        this.id = id;
-        this.data = data;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
+    public LargeBinaryEntity(byte[] binaryData) {
+        this.binaryData = binaryData;
     }
 
     public Long getId() {
         return id;
     }
 
-    protected void setData(List<ImageIcon> data) {
-        this.data = data;
+    public void setId(Long id) {
+        this.id = id;
     }
 
-    public List<ImageIcon> getData() {
-        return data;
+    public void setBinaryData(byte[] binaryData) {
+        this.binaryData = binaryData;
+    }
+
+    public byte[] getBinaryData() {
+        return binaryData;
     }
 }

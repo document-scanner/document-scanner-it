@@ -12,7 +12,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package richtercloud.document.scanner.it.entities;
+package de.richtercloud.document.scanner.it.entities;
 
 import java.io.Serializable;
 import java.util.LinkedList;
@@ -22,7 +22,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import richtercloud.document.scanner.ifaces.ImageWrapper;
+import de.richtercloud.document.scanner.ifaces.ImageWrapper;
 
 /**
  *
@@ -36,12 +36,12 @@ public class EntityImageWrapper implements Serializable {
     private Long id;
     @Basic(fetch = FetchType.EAGER) //avoids `org.eclipse.persistence.exceptions.DescriptorException
     //Exception Description: Trying to set value [[B@3e9803c2] for instance variable [data] of type [java.sql.Blob] in the object.  The specified object is not an instance of the class or interface declaring the underlying field, or an unwrapping conversion has failed.
-    //Internal Exception: java.lang.IllegalArgumentException: Can not set java.sql.Blob field richtercloud.document.scanner.it.entities.EntityImageWrapper.data to [B
+    //Internal Exception: java.lang.IllegalArgumentException: Can not set java.sql.Blob field EntityImageWrapper.data to [B
     //Mapping: org.eclipse.persistence.mappings.DirectToFieldMapping[data-->BLOBENTITY.BINARYDATA]
-    //Descriptor: RelationalDescriptor(richtercloud.document.scanner.it.entities.EntityImageWrapper --> [DatabaseTable(BLOBENTITY)])
+    //Descriptor: RelationalDescriptor(EntityImageWrapper --> [DatabaseTable(BLOBENTITY)])
     //Exception in thread "main" javax.persistence.PersistenceException: Exception [EclipseLink-32] (Eclipse Persistence Services - 2.6.4.v20160829-44060b6): org.eclipse.persistence.exceptions.DescriptorException
     //Exception Description: Trying to set value [[B@3e9803c2] for instance variable [data] of type [java.sql.Blob] in the object.  The specified object is not an instance of the class or interface declaring the underlying field, or an unwrapping conversion has failed.
-    //Internal Exception: java.lang.IllegalArgumentException: Can not set java.sql.Blob field richtercloud.document.scanner.it.entities.EntityImageWrapper.data to [B
+    //Internal Exception: java.lang.IllegalArgumentException: Can not set java.sql.Blob field EntityImageWrapper.data to [B
     //Mapping: org.eclipse.persistence.mappings.DirectToFieldMapping[data-->BLOBENTITY.BINARYDATA]`
     private List<ImageWrapper> data = new LinkedList<>();
 

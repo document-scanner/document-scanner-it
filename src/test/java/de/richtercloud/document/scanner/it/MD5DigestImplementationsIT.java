@@ -12,7 +12,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package richtercloud.document.scanner.it;
+package de.richtercloud.document.scanner.it;
 
 import java.io.File;
 import java.io.FileInputStream;
